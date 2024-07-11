@@ -36,7 +36,7 @@ namespace ManageRestaurantsClient.Pages.Users
                 {
                     var responseString = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<UserDTO>(responseString);
-                    TempData["Message"] = result.Message;
+                    TempData["Error"] = result.Message;
                     return Page();
                 }
             }

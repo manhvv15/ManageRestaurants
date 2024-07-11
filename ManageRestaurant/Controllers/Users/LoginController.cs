@@ -2,6 +2,7 @@
 using ManageRestaurant.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ManageRestaurant.Controllers.Users
 {
@@ -34,26 +35,36 @@ namespace ManageRestaurant.Controllers.Users
 
             if (loggedInUser != null)
             {
-                var token = _jwtAuthManager.GenerateToken(loggedInUser.UserName, loggedInUser.Password, loggedInUser.Role);
+                var token = _jwtAuthManager.GenerateToken(loggedInUser.UserName, loggedInUser.Role);
                 return Ok(new { token, message = "Login successful." });
             }
 
             return Unauthorized(new { message = "Invalid username or password." });
         }
-         
+       
 
-        //[HttpPost("refresh-token")]
-        //public IActionResult RefreshToken()
-        //{
-        //    var currentUser = HttpContext.User.Identity.Name;
-        //    if (string.IsNullOrEmpty(currentUser))
-        //    {
-        //        return Unauthorized(new { message = "Invalid token." });
-        //    }
 
-        //    var newToken = _jwtAuthManager.GenerateToken(currentUser);
-        //    return Ok(new { token = newToken });
-        //}
+        [HttpPost("refresh-token")]
+        public IActionResult RefreshToken()
+        {
+            var currentUser = HttpContext.User.Identity.Name;
+            if (string.IsNullOrEmpty(currentUser))
+            {
+                return Unauthorized(new { message = "Invalid token." });
+            }
+
+            // Lấy role của người dùng từ claims
+            var userRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            if (string.IsNullOrEmpty(userRole))
+            {
+                return Unauthorized(new { message = "Invalid token." });
+            }
+
+            // Tạo token mới
+            var newToken = _jwtAuthManager.GenerateToken(currentUser, userRole);
+            return Ok(new { token = newToken });
+        }
+
     }
 
 }

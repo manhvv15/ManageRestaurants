@@ -62,16 +62,7 @@ namespace ManageRestaurant.Repository
         {
             string hashedPassword = HashPassword(password);
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == hashedPassword);
-            //string hashedPassword = HashPassword(password);
-            //var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == hashedPassword);
-
-            //if (user != null)
-            //{
-            //    // Assuming you want to get the user's role and add it to the user object
-            //    user.Role = await GetUserRole(user);
-            //}
-
-            //return user;
+          
         }
 
 
