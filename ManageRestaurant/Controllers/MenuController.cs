@@ -39,12 +39,12 @@ namespace ManageRestaurant.Controllers
         }
 
 
-        [Authorize(Roles = AppRole.User)]
-        [HttpGet("test")]
-        public IActionResult test()
-        {
-            return Ok();
-        }
+        //[Authorize(Roles = AppRole.User)]
+        //[HttpGet("test")]
+        //public IActionResult test()
+        //{
+        //    return Ok();
+        //}
 
     }
 }
