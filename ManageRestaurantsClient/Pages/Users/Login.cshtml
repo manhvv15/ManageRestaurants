@@ -9,6 +9,7 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
         body {
             background: url('/images/background.jpg') no-repeat center center fixed;
@@ -75,5 +76,23 @@
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        $(document).ready(function() {
+        @if (TempData["Message"] != null)
+        {
+            <text>
+                        toastr.success("@TempData["Message"]");
+            </text>
+        }
+        @if (!string.IsNullOrEmpty(Model.User?.Message))
+        {
+            <text>
+                        toastr.error("@Model.User.Message");
+            </text>
+        }
+        });
+    </script>
 </body>
 </html>

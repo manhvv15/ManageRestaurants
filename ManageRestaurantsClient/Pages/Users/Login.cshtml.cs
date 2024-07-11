@@ -20,24 +20,25 @@ namespace ManageRestaurantsClient.Pages.Users
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var json = JsonConvert.SerializeObject(User);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await httpClient.PostAsync("https://localhost:5000/api/Login/login", content);
-
-            if (response.IsSuccessStatusCode)
+            using (HttpClient httpClient = new HttpClient())
             {
-                var responseString = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<UserDTO>(responseString);
-                User.Message = result.Message;
-                return RedirectToPage("home/Index"); 
-            }
-            else
-            {
-                var responseString = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<UserDTO>(responseString);
-                User.Message = result.Message;
-                return Page();
+                var url = $"https://localhost:5000/api/Login/login?Email={User.Email}&password={User.Password}";
+                HttpResponseMessage response = await httpClient.PostAsync(url, null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<UserDTO>(responseString);
+                    TempData["Message"] = result.Message;
+                    return RedirectToPage("/Home/Index");
+                }
+                else
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<UserDTO>(responseString);
+                    TempData["Message"] = result.Message;
+                    return Page();
+                }
             }
         }
     }
