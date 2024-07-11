@@ -1,5 +1,7 @@
 ﻿@page
-@model ManageRestaurantsClient.Pages.Home.IndexModel
+@model ManageRestaurantsClient.Pages.Admin.homeModel
+@{
+}
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -30,7 +32,7 @@
     <link href="~/lib/animate/animate.min.css" rel="stylesheet">
     <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
     <link href="~/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
-    
+
     <!-- Customized Bootstrap Stylesheet -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
@@ -63,16 +65,11 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto py-0 pe-4">
                         <a href="index.html" class="nav-item nav-link active">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
-                        <a href="service.html" class="nav-item nav-link">Service</a>
-                        <a href="menu.html" class="nav-item nav-link">Menu</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Booking</a>
-                            <div class="dropdown-menu m-0">
-                                <a href="booking.html" class="dropdown-item">Booking Information</a>
-                                <a href="team.html" class="dropdown-item">Booking History</a>
-                            </div>
-                        </div>
+                        <a href="about.html" class="nav-item nav-link">Order</a>
+                        <a href="/admin/menu" class="nav-item nav-link">Menu</a>
+                        <a href="menu.html" class="nav-item nav-link">Booking</a>
+                        <a href="menu.html" class="nav-item nav-link">User</a>
+                        <a href="menu.html" class="nav-item nav-link">Report</a>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
                     <a href="/Users/Login" class="btn btn-primary py-2 px-4">Sign In</a>
@@ -199,7 +196,7 @@
                     toastr.error("@TempData["ErrorMessage"]");
             </text>
         }
-                });
+                        });
     </script>
 </body>
 

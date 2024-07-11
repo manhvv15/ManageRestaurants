@@ -20,22 +20,24 @@ namespace ManageRestaurant.Interface
             _configuration = configuration;
         }
        
-        public string GenerateToken(string username, string role)
+        public string GenerateToken(string Email, string role)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:JwtSecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expiry = DateTime.UtcNow.AddMinutes(30);
 
+           
             var claims = new[]
             {
-        new Claim(ClaimTypes.Name, username),
-        new Claim(ClaimTypes.Role, role)
+        new Claim(ClaimTypes.Email, Email),
+        new Claim(ClaimTypes.Role, role),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
             var token = new JwtSecurityToken(
                 _configuration["JwtIssuer"],
                 _configuration["JwtAudience"],
-                claims,
+                claims: claims,
                 expires: expiry,
                 signingCredentials: creds
             );
