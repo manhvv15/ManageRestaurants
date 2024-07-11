@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManageRestaurant", "ManageRestaurant\ManageRestaurant.csproj", "{59E84257-0BD0-44BD-9DB2-5930B9FCBA90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManageRestaurantsClient", "ManageRestaurantsClient\ManageRestaurantsClient.csproj", "{45C5F623-D0FC-44CB-A43D-AF19E21DD2C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManageRestaurantsClient", "ManageRestaurantsClient\ManageRestaurantsClient.csproj", "{45C5F623-D0FC-44CB-A43D-AF19E21DD2C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
