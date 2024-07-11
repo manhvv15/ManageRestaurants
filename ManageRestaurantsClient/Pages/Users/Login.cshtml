@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
         body {
-            background: url('/images/background.jpg') no-repeat center center fixed;
+            background: url('/img/background.jpg') no-repeat center center fixed;
             background-size: cover;
         }
 
@@ -79,20 +79,27 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
         @if (TempData["Message"] != null)
         {
             <text>
-                        toastr.success("@TempData["Message"]");
+                    toastr.success("@TempData["Message"]");
+            </text>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <text>
+                    toastr.error("@TempData["Error"]");
             </text>
         }
         @if (!string.IsNullOrEmpty(Model.User?.Message))
         {
             <text>
-                        toastr.error("@Model.User.Message");
+                    toastr.error("@Model.User.Message");
             </text>
         }
-        });
+                });
     </script>
+
 </body>
 </html>

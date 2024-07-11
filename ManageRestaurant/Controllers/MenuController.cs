@@ -19,7 +19,7 @@ namespace ManageRestaurant.Controllers
         }
 
         [HttpGet("getMenu")]
-        [Authorize(Roles =AppRole.User)]
+        [Authorize]
         
         public async Task<ActionResult<Menu>> GetAllMenuItems()
         {
