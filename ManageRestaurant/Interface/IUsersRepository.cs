@@ -6,5 +6,6 @@ namespace ManageRestaurant.Interface
     {
         Task<bool> RegisterUser(string username, string Email, string password);
         Task<User> LoginUser(string username, string password);
+        Task<User> GetUserById(int userId);
     }
 }

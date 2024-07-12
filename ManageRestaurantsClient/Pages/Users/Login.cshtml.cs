@@ -1,4 +1,4 @@
-using ManageRestaurantsClient.DTO;
+﻿using ManageRestaurantsClient.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text;
@@ -29,8 +29,27 @@ namespace ManageRestaurantsClient.Pages.Users
                 {
                     var responseString = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<UserDTO>(responseString);
+                    // Lưu token vào cookie
+                    Response.Cookies.Append("AuthToken", result.Token, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        Expires = DateTime.UtcNow.AddHours(1)
+                    });
+                    //var user =
                     TempData["Message"] = result.Message;
-                    return RedirectToPage("/Home/Index");
+                    if (result.Role == "Admin")
+                    {
+                        return RedirectToPage("/Admin/home");
+                    }
+                    else if (result.Role == "User")
+                    {
+                        return RedirectToPage("/Home/Index");
+                    }
+                    else
+                    {
+                        return Page();
+                    }
                 }
                 else
                 {
