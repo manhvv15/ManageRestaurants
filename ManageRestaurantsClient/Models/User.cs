@@ -7,9 +7,8 @@ namespace ManageRestaurant.Models
     {
         public User()
         {
+            BookingRequests = new HashSet<BookingRequest>();
             Orders = new HashSet<Order>();
-            Reserveds = new HashSet<Reserved>();
-            StaffSchedules = new HashSet<StaffSchedule>();
         }
 
         public int UserId { get; set; }
@@ -21,11 +20,12 @@ namespace ManageRestaurant.Models
         public string? Role { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string CreatedBy { get; set; } = null!;
+        public DateTime? UpdateAt { get; set; }
+        public string? UpdateBy { get; set; }
         public DateTime? DeletedAt { get; set; }
         public string? DeletedBy { get; set; }
 
+        public virtual ICollection<BookingRequest> BookingRequests { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
-        public virtual ICollection<Reserved> Reserveds { get; set; }
-        public virtual ICollection<StaffSchedule> StaffSchedules { get; set; }
     }
 }

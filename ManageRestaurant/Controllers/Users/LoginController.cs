@@ -49,35 +49,6 @@ namespace ManageRestaurant.Controllers.Users
 
             return Unauthorized(new { message = "Invalid username or password." });
         }
-        //public async Task<IActionResult> Login(string email, string password)
-        //{
-        //    var loggedInUser = await _usersRepository.LoginUser(email, password);
-
-        //    if (loggedInUser != null)
-        //    {
-        //        var authClaims = new List<Claim>
-        //{
-        //    new Claim(ClaimTypes.Email, email),
-        //    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        //};
-        //        authClaims.Add(new Claim(ClaimTypes.Role, "'User'"));
-        //        var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
-
-        //        var token = new JwtSecurityToken(
-        //            issuer: configuration["JWT:ValidIssuer"],
-        //            audience: configuration["JWT:ValidAudience"],
-        //            expires: DateTime.Now.AddMinutes(20),
-        //            claims: authClaims,
-        //            signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
-        //        );
-
-        //        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-        //        return Ok(new { token = tokenString, message = "Login successful." });
-        //    }
-
-        //    return Unauthorized(new { message = "Invalid username or password." });
-        //}
-
 
 
         [HttpPost("refresh-token")]
