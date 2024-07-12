@@ -3,6 +3,7 @@ using ManageRestaurant.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -40,39 +41,49 @@ namespace ManageRestaurant.Controllers.Users
 
             if (loggedInUser != null)
             {
-                //var token = _jwtAuthManager.GenerateToken(loggedInUser.Email, loggedInUser.Role);
-                //return Ok(new { token, message = "Login successful." });
+                var token = _jwtAuthManager.GenerateToken(loggedInUser.Email, loggedInUser.Role);
+                return Ok(new { token, message = "Login successful." });
 
-                var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-                var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:JwtSecurityKey"]));
-
-                var token = new JwtSecurityToken(
-                    issuer: configuration["JWT:ValidIssuer"],
-                    audience: configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddMinutes(20),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
-                );
-
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-                return Ok(new { token = tokenString, message = "Login successful." });
 
             }
 
             return Unauthorized(new { message = "Invalid username or password." });
         }
-       
+        //public async Task<IActionResult> Login(string email, string password)
+        //{
+        //    var loggedInUser = await _usersRepository.LoginUser(email, password);
+
+        //    if (loggedInUser != null)
+        //    {
+        //        var authClaims = new List<Claim>
+        //{
+        //    new Claim(ClaimTypes.Email, email),
+        //    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        //};
+        //        authClaims.Add(new Claim(ClaimTypes.Role, "'User'"));
+        //        var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
+
+        //        var token = new JwtSecurityToken(
+        //            issuer: configuration["JWT:ValidIssuer"],
+        //            audience: configuration["JWT:ValidAudience"],
+        //            expires: DateTime.Now.AddMinutes(20),
+        //            claims: authClaims,
+        //            signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
+        //        );
+
+        //        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        //        return Ok(new { token = tokenString, message = "Login successful." });
+        //    }
+
+        //    return Unauthorized(new { message = "Invalid username or password." });
+        //}
+
 
 
         [HttpPost("refresh-token")]
         public IActionResult RefreshToken()
         {
-            var currentUser = HttpContext.User.Identity.Name;
+            var currentUser = HttpContext.User.Identity.Name.ToString();
             if (string.IsNullOrEmpty(currentUser))
             {
                 return Unauthorized(new { message = "Invalid token." });
