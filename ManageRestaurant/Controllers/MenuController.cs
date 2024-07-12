@@ -23,19 +23,19 @@ namespace ManageRestaurant.Controllers
         
         public async Task<ActionResult<Menu>> GetAllMenuItems()
         {
-            var menuItems = await context.Menus
-                .Select(mi => new MenuDTO
-                {
-                    Name = mi.Name,
-                    Address = mi.Restaurant.Address,
-                    Phone = mi.Restaurant.Phone,
-                    Email = mi.Restaurant.Email,
-                    Description = mi.Description,
-                    Rating = (double)mi.Restaurant.Rating
-                })
-                .ToListAsync();
+            //    var menuItems = await context.Menus
+            //        .Select(mi => new MenuDTO
+            //        {
+            //            Name = mi.Name,
+            //            Address = mi.Restaurant.Address,
+            //            Phone = mi.Restaurant.Phone,
+            //            Email = mi.Restaurant.Email,
+            //            Description = mi.Description,
+            //            Rating = (double)mi.Restaurant.Rating
+            //        })
+            //        .ToListAsync();
 
-            return Ok(menuItems);
+            return Ok();
         }
 
 

@@ -9,7 +9,6 @@ namespace ManageRestaurant.Models
     {
         public ManageRestaurantContext()
         {
-
         }
 
         public ManageRestaurantContext(DbContextOptions<ManageRestaurantContext> options)
@@ -17,15 +16,12 @@ namespace ManageRestaurant.Models
         {
         }
 
+        public virtual DbSet<BookingRequest> BookingRequests { get; set; } = null!;
         public virtual DbSet<Menu> Menus { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
-        public virtual DbSet<Payment> Payments { get; set; } = null!;
-        public virtual DbSet<Promotion> Promotions { get; set; } = null!;
-        public virtual DbSet<Reserved> Reserveds { get; set; } = null!;
-        public virtual DbSet<Restaurant> Restaurants { get; set; } = null!;
-        public virtual DbSet<StaffSchedule> StaffSchedules { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
+        public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -42,6 +38,44 @@ namespace ManageRestaurant.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<BookingRequest>(entity =>
+            {
+                entity.HasKey(e => e.BookingId)
+                    .HasName("PK__BookingR__5DE3A5B103D8C0BD");
+
+                entity.ToTable("BookingRequest");
+
+                entity.Property(e => e.BookingId).HasColumnName("booking_id");
+
+                entity.Property(e => e.Note)
+                    .HasMaxLength(100)
+                    .HasColumnName("note");
+
+                entity.Property(e => e.NumberOfGuests).HasColumnName("number_of_guests");
+
+                entity.Property(e => e.ReservationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("reservation_date");
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .HasColumnName("status");
+
+                entity.Property(e => e.TableId).HasColumnName("table_id");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.HasOne(d => d.Table)
+                    .WithMany(p => p.BookingRequests)
+                    .HasForeignKey(d => d.TableId)
+                    .HasConstraintName("FK__BookingRe__table__3E52440B");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.BookingRequests)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__BookingRe__user___3D5E1FD2");
+            });
+
             modelBuilder.Entity<Menu>(entity =>
             {
                 entity.Property(e => e.MenuId).HasColumnName("menu_id");
@@ -61,27 +95,22 @@ namespace ManageRestaurant.Models
                 entity.Property(e => e.Price)
                     .HasColumnType("decimal(10, 2)")
                     .HasColumnName("price");
-
-                entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
-
-                entity.HasOne(d => d.Restaurant)
-                    .WithMany(p => p.Menus)
-                    .HasForeignKey(d => d.RestaurantId)
-                    .HasConstraintName("FK__Menus__restauran__6C190EBB");
             });
 
             modelBuilder.Entity<Order>(entity =>
             {
                 entity.Property(e => e.OrderId).HasColumnName("order_id");
 
+                entity.Property(e => e.CheckoutTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("checkout_time");
+
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("createdAt")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.CreatedBy)
-                    .HasMaxLength(100)
-                    .HasColumnName("createdBy");
+                entity.Property(e => e.CreatedBy).HasColumnName("createdBy");
 
                 entity.Property(e => e.DeletedAt)
                     .HasColumnType("datetime")
@@ -91,36 +120,21 @@ namespace ManageRestaurant.Models
                     .HasMaxLength(100)
                     .HasColumnName("deletedBy");
 
-                entity.Property(e => e.MenuId).HasColumnName("menu_id");
-
-                entity.Property(e => e.Quantity).HasColumnName("quantity");
-
-                entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
-
                 entity.Property(e => e.Status)
                     .HasMaxLength(50)
                     .HasColumnName("status");
 
-                entity.Property(e => e.TotalPrice)
-                    .HasColumnType("decimal(10, 2)")
-                    .HasColumnName("total_price");
+                entity.Property(e => e.TableId).HasColumnName("table_id");
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.Menu)
+                entity.HasOne(d => d.CreatedByNavigation)
                     .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.MenuId)
-                    .HasConstraintName("FK__Orders__menu_id__70DDC3D8");
+                    .HasForeignKey(d => d.CreatedBy)
+                    .HasConstraintName("FK__Orders__createdB__4316F928");
 
-                entity.HasOne(d => d.Restaurant)
+                entity.HasOne(d => d.Table)
                     .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.RestaurantId)
-                    .HasConstraintName("FK__Orders__restaura__6FE99F9F");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Orders__user_id__6EF57B66");
+                    .HasForeignKey(d => d.TableId)
+                    .HasConstraintName("FK__Orders__table_id__4222D4EF");
             });
 
             modelBuilder.Entity<OrderDetail>(entity =>
@@ -133,6 +147,10 @@ namespace ManageRestaurant.Models
 
                 entity.Property(e => e.OrderId).HasColumnName("order_id");
 
+                entity.Property(e => e.Price)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("price");
+
                 entity.Property(e => e.Quantity).HasColumnName("quantity");
 
                 entity.Property(e => e.TotalPrice)
@@ -142,17 +160,38 @@ namespace ManageRestaurant.Models
                 entity.HasOne(d => d.Menu)
                     .WithMany(p => p.OrderDetails)
                     .HasForeignKey(d => d.MenuId)
-                    .HasConstraintName("FK__OrderDeta__menu___03F0984C");
+                    .HasConstraintName("FK__OrderDeta__menu___48CFD27E");
 
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.OrderDetails)
                     .HasForeignKey(d => d.OrderId)
-                    .HasConstraintName("FK__OrderDeta__order__02FC7413");
+                    .HasConstraintName("FK__OrderDeta__order__47DBAE45");
             });
 
-            modelBuilder.Entity<Payment>(entity =>
+            modelBuilder.Entity<Table>(entity =>
             {
-                entity.Property(e => e.PaymentId).HasColumnName("payment_id");
+                entity.Property(e => e.TableId).HasColumnName("table_id");
+
+                entity.Property(e => e.Capacity).HasColumnName("capacity");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(1000)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .HasColumnName("status");
+
+                entity.Property(e => e.TableNumber).HasColumnName("table_number");
+            });
+
+            modelBuilder.Entity<Transaction>(entity =>
+            {
+                entity.Property(e => e.TransactionId).HasColumnName("transaction_id");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(1000)
+                    .HasColumnName("description");
 
                 entity.Property(e => e.OrderId).HasColumnName("order_id");
 
@@ -169,164 +208,19 @@ namespace ManageRestaurant.Models
                     .HasColumnType("decimal(10, 2)")
                     .HasColumnName("price");
 
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .HasColumnName("status");
+
                 entity.HasOne(d => d.Order)
-                    .WithMany(p => p.Payments)
+                    .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.OrderId)
-                    .HasConstraintName("FK__Payments__order___74AE54BC");
-            });
-
-            modelBuilder.Entity<Promotion>(entity =>
-            {
-                entity.Property(e => e.PromotionId).HasColumnName("promotion_id");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(255)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.DiscountPercentage).HasColumnName("discount_percentage");
-
-                entity.Property(e => e.EndDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("end_date");
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(100)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
-
-                entity.Property(e => e.StartDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("start_date");
-
-                entity.HasOne(d => d.Restaurant)
-                    .WithMany(p => p.Promotions)
-                    .HasForeignKey(d => d.RestaurantId)
-                    .HasConstraintName("FK__Promotion__resta__693CA210");
-            });
-
-            modelBuilder.Entity<Reserved>(entity =>
-            {
-                entity.HasKey(e => e.ReservationId)
-                    .HasName("PK__Reserved__31384C29CA974B0F");
-
-                entity.ToTable("Reserved");
-
-                entity.Property(e => e.ReservationId).HasColumnName("reservation_id");
-
-                entity.Property(e => e.NumberOfGuests).HasColumnName("number_of_guests");
-
-                entity.Property(e => e.ReservationDate)
-                    .HasColumnType("date")
-                    .HasColumnName("reservation_date");
-
-                entity.Property(e => e.ReservationTime).HasColumnName("reservation_time");
-
-                entity.Property(e => e.Status)
-                    .HasMaxLength(50)
-                    .HasColumnName("status");
-
-                entity.Property(e => e.TableId).HasColumnName("table_id");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.Table)
-                    .WithMany(p => p.Reserveds)
-                    .HasForeignKey(d => d.TableId)
-                    .HasConstraintName("FK__Reserved__table___66603565");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Reserveds)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Reserved__user_i__656C112C");
-            });
-
-            modelBuilder.Entity<Restaurant>(entity =>
-            {
-                entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
-
-                entity.Property(e => e.Address)
-                    .HasMaxLength(255)
-                    .HasColumnName("address");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(255)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.Email)
-                    .HasMaxLength(100)
-                    .HasColumnName("email");
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(100)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.Phone)
-                    .HasMaxLength(20)
-                    .HasColumnName("phone");
-
-                entity.Property(e => e.Rating)
-                    .HasColumnType("decimal(1, 1)")
-                    .HasColumnName("rating");
-            });
-
-            modelBuilder.Entity<StaffSchedule>(entity =>
-            {
-                entity.HasKey(e => e.ScheduleId)
-                    .HasName("PK__StaffSch__C46A8A6F1C5D1BEB");
-
-                entity.Property(e => e.ScheduleId).HasColumnName("schedule_id");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(255)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.EndTime).HasColumnName("end_time");
-
-                entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
-
-                entity.Property(e => e.ShiftDate)
-                    .HasColumnType("date")
-                    .HasColumnName("shift_date");
-
-                entity.Property(e => e.StartTime).HasColumnName("start_time");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.Restaurant)
-                    .WithMany(p => p.StaffSchedules)
-                    .HasForeignKey(d => d.RestaurantId)
-                    .HasConstraintName("FK__StaffSche__resta__5FB337D6");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.StaffSchedules)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__StaffSche__user___5EBF139D");
-            });
-
-            modelBuilder.Entity<Table>(entity =>
-            {
-                entity.Property(e => e.TableId).HasColumnName("table_id");
-
-                entity.Property(e => e.Capacity).HasColumnName("capacity");
-
-                entity.Property(e => e.RestaurantId).HasColumnName("restaurant_id");
-
-                entity.Property(e => e.Status)
-                    .HasMaxLength(50)
-                    .HasColumnName("status");
-
-                entity.Property(e => e.TableNumber).HasColumnName("table_number");
-
-                entity.HasOne(d => d.Restaurant)
-                    .WithMany(p => p.Tables)
-                    .HasForeignKey(d => d.RestaurantId)
-                    .HasConstraintName("FK__Tables__restaura__628FA481");
+                    .HasConstraintName("FK__Transacti__order__4BAC3F29");
             });
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Email, "UQ__Users__AB6E6164ED188222")
+                entity.HasIndex(e => e.Email, "UQ__Users__AB6E616450CD563E")
                     .IsUnique();
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -365,6 +259,14 @@ namespace ManageRestaurant.Models
                 entity.Property(e => e.Role)
                     .HasMaxLength(50)
                     .HasColumnName("role");
+
+                entity.Property(e => e.UpdateAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateAt");
+
+                entity.Property(e => e.UpdateBy)
+                    .HasMaxLength(100)
+                    .HasColumnName("updateBy");
 
                 entity.Property(e => e.UserName)
                     .HasMaxLength(100)
