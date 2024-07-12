@@ -42,35 +42,68 @@ namespace ManageRestaurant.Controllers.Users
             if (loggedInUser != null)
             {
                 var token = _jwtAuthManager.GenerateToken(loggedInUser.Email, loggedInUser.Role);
-                return Ok(new { token, message = "Login successful." });
-
+                //return Ok(new { token, message = "Login successful." });
+                return Ok(new { userId = loggedInUser.UserId,role = loggedInUser.Role, token, message = "Login successful." });
 
             }
 
             return Unauthorized(new { message = "Invalid username or password." });
+        }
+        [HttpGet("user-info/{userId}")]
+        public async Task<IActionResult> GetUserInfo(int userId)
+        {
+            var user = await _usersRepository.GetUserById(userId);
+
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+
+            var userInfo = new
+            {
+                user.UserId,
+                user.UserName,
+                user.Email,
+                user.Balance,
+                user.Phone,
+                user.Role,
+                user.CreatedAt,
+                user.CreatedBy,
+                user.UpdateAt,
+                user.UpdateBy,
+                user.DeletedAt,
+                user.DeletedBy
+            };
+
+            return Ok(userInfo);
         }
 
 
         [HttpPost("refresh-token")]
         public IActionResult RefreshToken()
         {
-            var currentUser = HttpContext.User.Identity.Name.ToString();
-            if (string.IsNullOrEmpty(currentUser))
+            // Ensure the current user is authenticated
+            if (!HttpContext.User.Identity.IsAuthenticated)
             {
                 return Unauthorized(new { message = "Invalid token." });
             }
 
-            // Lấy role của người dùng từ claims
+            // Get the email and role of the current user from claims
+            var userEmail = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var userRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-            if (string.IsNullOrEmpty(userRole))
+
+            if (string.IsNullOrEmpty(userEmail) || string.IsNullOrEmpty(userRole))
             {
                 return Unauthorized(new { message = "Invalid token." });
             }
 
-            // Tạo token mới
-            var newToken = _jwtAuthManager.GenerateToken(currentUser, userRole);
+            // Generate a new token
+            var newToken = _jwtAuthManager.GenerateToken(userEmail, userRole);
+
+            // Return the new token in the response
             return Ok(new { token = newToken });
         }
+
 
     }
 

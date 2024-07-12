@@ -1,0 +1,89 @@
+﻿@page
+@model ManageRestaurantsClient.Pages.Users.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+        body {
+            background: url('/img/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+        }
+
+        .register-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .register-box {
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-social {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="register-container">
+        <div class="register-box">
+            <h2 class="text-center">Register</h2>
+            <form method="post">
+                <div class="form-group">
+                    <label for="UserName">Username</label>
+                    <input type="text" class="form-control" id="UserName" name="userDTO.UserName" required>
+                </div>
+                <div class="form-group">
+                    <label for="Email">Email</label>
+                    <input type="email" class="form-control" id="Email" name="userDTO.Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="Password">Password</label>
+                    <input type="password" class="form-control" id="Password" name="userDTO.Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        @if (TempData["Message"] != null)
+        {
+            <text>
+                    toastr.success("@TempData["Message"]");
+            </text>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <text>
+                    toastr.error("@TempData["Error"]");
+            </text>
+        }
+            });
+    </script>
+</body>
+</html>

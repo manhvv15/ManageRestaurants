@@ -81,5 +81,9 @@ namespace ManageRestaurant.Repository
                 return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
             }
         }
+        public async Task<User> GetUserById(int userId)
+        {
+            return await _context.Users.FindAsync(userId);
+        }
     }
 }

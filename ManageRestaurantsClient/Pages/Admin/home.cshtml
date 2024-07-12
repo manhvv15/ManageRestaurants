@@ -4,6 +4,7 @@
 }
 @{
     ViewData["Title"] = "Home Page";
+    bool isAuthenticated = Request.Cookies.ContainsKey("AuthToken");
 }
 
 <!DOCTYPE html>
@@ -56,14 +57,14 @@
         <div class="container-xxl position-relative p-0">
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
                 <a href="" class="navbar-brand p-0">
-                    <h1 class="text-primary m-0"><i class="fa fa-utensils me-3"></i>Restaurant</h1>
+                    <h3 class="text-primary m-0"><i class="fa fa-utensils me-3"></i>Restaurant</h3>
                     <!-- <img src="img/logo.png" alt="Logo"> -->
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="fa fa-bars"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <div class="navbar-nav ms-auto py-0 pe-4">
+                    <div class="navbar-nav ms-auto py-0 pe-4" style="align-items:center">
                         <a href="index.html" class="nav-item nav-link active">Home</a>
                         <a href="about.html" class="nav-item nav-link">Order</a>
                         <a href="/admin/menu" class="nav-item nav-link">Menu</a>
@@ -71,8 +72,19 @@
                         <a href="menu.html" class="nav-item nav-link">User</a>
                         <a href="menu.html" class="nav-item nav-link">Report</a>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
+                        <a href="contact.html" class="nav-item nav-link">
+                            <img src="/img/hero.png" alt="Profile Icon" style="width: 40px; height: 40px;  margin-right: 8px;">
+                            Profile
+                        </a>
                     </div>
-                    <a href="/Users/Login" class="btn btn-primary py-2 px-4">Sign In</a>
+                    @if (isAuthenticated)
+                    {
+                        <a class="btn btn-primary py-2 px-4" href="/Users/Logout">Sign Out</a>
+                    }
+                    else
+                    {
+                        <a  class="btn btn-primary py-2 px-4" href="/Users/Login">Sign In</a>
+                    }
                 </div>
             </nav>
 
@@ -196,7 +208,7 @@
                     toastr.error("@TempData["ErrorMessage"]");
             </text>
         }
-                        });
+                                });
     </script>
 </body>
 
