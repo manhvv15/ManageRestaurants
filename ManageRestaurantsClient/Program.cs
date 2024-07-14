@@ -1,9 +1,17 @@
+using ManageRestaurantsClient.Role;
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,5 +36,6 @@ app.UseEndpoints(endpoints =>
         context.Response.Redirect("/home/index");
     });
 });
+
 
 app.Run();

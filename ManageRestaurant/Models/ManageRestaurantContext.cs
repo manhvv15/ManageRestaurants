@@ -20,6 +20,7 @@ namespace ManageRestaurant.Models
         public virtual DbSet<Menu> Menus { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
+        public virtual DbSet<Reserved> Reserveds { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -33,7 +34,6 @@ namespace ManageRestaurant.Models
             .Build();
             var strConn = config["ConnectionStrings:MyDatabase"];
             optionsBuilder.UseSqlServer(strConn);
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -166,6 +166,27 @@ namespace ManageRestaurant.Models
                     .WithMany(p => p.OrderDetails)
                     .HasForeignKey(d => d.OrderId)
                     .HasConstraintName("FK__OrderDeta__order__47DBAE45");
+            });
+
+            modelBuilder.Entity<Reserved>(entity =>
+            {
+                entity.ToTable("Reserved");
+
+                entity.Property(e => e.BookingId).HasColumnName("booking_id");
+
+                entity.Property(e => e.ReservedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.TableId).HasColumnName("table_id");
+
+                entity.HasOne(d => d.Booking)
+                    .WithMany(p => p.Reserveds)
+                    .HasForeignKey(d => d.BookingId)
+                    .HasConstraintName("FK__Reserved__bookin__68487DD7");
+
+                entity.HasOne(d => d.Table)
+                    .WithMany(p => p.Reserveds)
+                    .HasForeignKey(d => d.TableId)
+                    .HasConstraintName("FK__Reserved__table___6754599E");
             });
 
             modelBuilder.Entity<Table>(entity =>
