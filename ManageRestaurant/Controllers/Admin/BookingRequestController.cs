@@ -19,10 +19,46 @@ namespace ManageRestaurant.Controllers.Admin
             this.context = context;
         }
         [HttpGet]
-       // [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
+        //public async Task<ActionResult> getAllBooking(int pageNumber = 1, int pageSize = 10)
+        //{
+        //    var bookings = await context.BookingRequests
+        //                         .Include(t => t.Table)
+        //                         .Include(u => u.User)
+        //                         .Skip((pageNumber - 1) * pageSize)
+        //                         .Take(pageSize)
+        //                         .ToListAsync();
+
+        //    var bookingList = bookings.Select(b => new BookingRequestDTO
+        //    {
+        //        BookingId = b.BookingId,
+        //        UserId = (int)b.UserId,
+        //        UserName = b.User.UserName,
+        //        Email = b.User.Email,
+        //        TableId = (int)b.TableId,
+        //        TableNumber = b.Table.TableNumber,
+        //        ReservationDate = b.ReservationDate,
+        //        NumberOfGuests = b.NumberOfGuests,
+        //        Status = b.Status,
+        //        Note = b.Note
+        //    });
+
+        //    var totalBookings = await context.BookingRequests.CountAsync();
+
+        //    return Ok(new
+        //    {
+        //        PageNumber = pageNumber,
+        //        PageSize = pageSize,
+        //        TotalBookings = totalBookings,
+        //        Bookings = bookingList
+        //    });
+        //}
         public async Task<ActionResult> getAllBooking()
         {
-            var bookings = await context.BookingRequests.Include(t => t.Table).Include(u => u.User).ToListAsync();
+            var bookings = await context.BookingRequests
+                                 .Include(t => t.Table)
+                                 .Include(u => u.User).ToListAsync();
+
             var bookingList = bookings.Select(b => new BookingRequestDTO
             {
                 BookingId = b.BookingId,
@@ -36,10 +72,17 @@ namespace ManageRestaurant.Controllers.Admin
                 Status = b.Status,
                 Note = b.Note
             });
-            return Ok(bookingList);
+
+            var totalBookings = await context.BookingRequests.CountAsync();
+
+            return Ok(new
+            {
+                Bookings = bookingList
+            });
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> updateStatusBooking(int bookingId, bool isApproved)
         {
             string toEmail = "manhvv15@gmail.com";
@@ -55,7 +98,7 @@ namespace ManageRestaurant.Controllers.Admin
 
                 booking.Status = "completed";
                 body = "Dat ban thanh cong";
-                email.SendEmail(toEmail, subject, body);
+               // email.SendEmail(toEmail, subject, body);
                 //var checkTable = await context.Tables.AnyAsync(t => t.Status == "available"); ///ngay , gio -1
                 //if (checkTable)
                 //{
@@ -67,7 +110,7 @@ namespace ManageRestaurant.Controllers.Admin
             else
             {
                 body = "Dat ban that bai";
-                email.SendEmail(toEmail, subject, body);
+              //  email.SendEmail(toEmail, subject, body);
                 booking.Status = "canceled";
             }
             context.BookingRequests.Update(booking);

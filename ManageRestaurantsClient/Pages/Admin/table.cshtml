@@ -1,0 +1,147 @@
+﻿@page
+@model ManageRestaurantsClient.Pages.Admin.tableModel
+@{
+    ViewData["Title"] = "Table List";
+    bool isAuthenticated = Request.Cookies.ContainsKey("AuthToken");
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ManageRestaurant</title>
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="~/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="~/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <div class="container-xxl position-relative p-0">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
+                <a href="/admin/home" class="navbar-brand p-0">
+                    <h3 class="text-primary m-0"><i class="fa fa-utensils me-3"></i>Restaurant</h3>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0 pe-4" style="align-items:center">
+                        <a href="/admin/home" class="nav-item nav-link active">Home</a>
+                        <a href="/admin/order" class="nav-item nav-link">Order</a>
+                        <a href="/admin/menu" class="nav-item nav-link">Menu</a>
+                        <a href="/admin/booking" class="nav-item nav-link">Booking</a>
+                        <a href="/admin/user" class="nav-item nav-link">User</a>
+                        <a href="/admin/report" class="nav-item nav-link">Report</a>
+                        <a href="/admin/table" class="nav-item nav-link">Table</a>
+                        <a href="/admin/profile" class="nav-item nav-link">
+                            <img src="/img/hero.png" alt="Profile Icon" style="width: 40px; height: 40px; margin-right: 8px;">
+                            Profile
+                        </a>
+                    </div>
+                    @if (isAuthenticated)
+                    {
+                        <a class="btn btn-primary py-2 px-4" href="/Users/Logout">Sign Out</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary py-2 px-4" href="/Users/Login">Sign In</a>
+                    }
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <h1>Check Table Availability</h1>
+
+    <form method="post">
+        <label for="reservationDate">Date:</label>
+        <input type="date" asp-for="ReservationDate" />
+
+        <label for="reservationTime">Time:</label>
+        <input type="time" asp-for="ReservationTime" step="1" />
+
+        <button type="submit">Check Availability</button>
+    </form>
+
+    <div class="tables-container">
+        @if (Model.Tables != null)
+        {
+            @foreach (var table in Model.Tables)
+            {
+                <div class="table @(table.IsAvailable ? "available" : "reserved")">
+                    Table @table.TableId
+                </div>
+            }
+            <script>
+                window.onload = function () {
+                @{
+                    var availableTablesCount = Model.Tables.Count(t => t.IsAvailable);
+                    if (availableTablesCount > 0)
+                    {
+                        <text>
+                                alert('There are @availableTablesCount table(s) available.');
+                        </text>
+                    }
+                    else
+                    {
+                        <text>
+                                alert('No tables are available for the selected date and time.');
+                        </text>
+                    }
+                }
+                        };
+            </script>
+        }
+
+    </div>
+
+    <style>
+        .tables-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .table {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: white;
+            border-radius: 10px;
+        }
+
+        .available {
+            background-color: green;
+        }
+
+        .reserved {
+            background-color: red;
+        }
+    </style>
+
+</body>
+</html>
