@@ -9,6 +9,7 @@ namespace ManageRestaurant.Models
         {
             BookingRequests = new HashSet<BookingRequest>();
             Orders = new HashSet<Order>();
+            Reserveds = new HashSet<Reserved>();
         }
 
         public int TableId { get; set; }
@@ -19,5 +20,6 @@ namespace ManageRestaurant.Models
 
         public virtual ICollection<BookingRequest> BookingRequests { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Reserved> Reserveds { get; set; }
     }
 }

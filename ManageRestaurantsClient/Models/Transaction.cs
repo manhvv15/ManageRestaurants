@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ManageRestaurant.Models
+namespace ManageRestaurantsClient.Models
 {
     public partial class Transaction
     {
