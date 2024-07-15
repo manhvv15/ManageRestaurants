@@ -7,5 +7,9 @@ namespace ManageRestaurant.Interface
         Task<bool> RegisterUser(string username, string Email, string password);
         Task<User> LoginUser(string username, string password);
         Task<User> GetUserById(int userId);
+        Task<IEnumerable<User>> GetAllAsync();
+        Task<int> CreateAsync(User user);
+        Task<bool> UpdateAsync(User user);
+        Task<bool> DeleteAsync(int userId);
     }
 }

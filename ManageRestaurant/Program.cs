@@ -55,6 +55,8 @@ namespace ManageRestaurant
             });
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IJwtAuthManager, JwtAuthManager>();
+            builder.Services.AddScoped<IMenuRepository, MenuRepository>();
+            builder.Services.AddScoped<IBookingRequestRepository, BookingRequestRepository>();
             builder.Services.AddCors();
             //builder.Services.AddAuthentication(options => {
             //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
