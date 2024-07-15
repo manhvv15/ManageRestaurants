@@ -1,0 +1,57 @@
+﻿@page "{id?}"
+@model ManageRestaurantsClient.Pages.Home.confirmBookingModel
+@{
+}
+<h1>Booking Confirmation</h1>
+
+<div class="alert alert-success" role="alert">
+    Booking success
+</div>
+
+<p>
+    <a asp-page="/Index">Back to Home</a>
+</p>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    .alert {
+        margin-top: 20px;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    function confirmBooking(bookingId) {
+        fetch(`https://localhost:5000/api/BookingRequest/ConfirmBooking?id=${bookingId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Add Authorization header if needed
+            },
+            body: JSON.stringify({
+                id: bookingId
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to confirm booking');
+                }
+                return response.json();
+            })
+            .then(data => {
+            })
+            .catch(error => {
+                console.error('Error confirming booking:', error);
+            });
+    }
+    $(document).ready(function () {
+        confirmBooking('@Model.BookingId')
+    });
+</script>

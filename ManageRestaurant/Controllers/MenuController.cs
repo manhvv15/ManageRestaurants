@@ -1,5 +1,6 @@
 ﻿using ManageRestaurant.DTO;
 using ManageRestaurant.Helper;
+using ManageRestaurant.Interface;
 using ManageRestaurant.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,39 +13,57 @@ namespace ManageRestaurant.Controllers
     [ApiController]
     public class MenuController : ControllerBase
     {
-        private readonly ManageRestaurantContext context;
-        public MenuController(ManageRestaurantContext context)
+        private readonly IMenuRepository _menuRepository;
+
+        public MenuController(IMenuRepository menuRepository)
         {
-            this.context = context;
+            _menuRepository = menuRepository;
         }
 
-        [HttpGet("getMenu")]
+        [HttpGet("GetMenusAsync")]
         [Authorize]
         
-        public async Task<ActionResult<Menu>> GetAllMenuItems()
+        public async Task<ActionResult> GetMenusAsync()
         {
-            //    var menuItems = await context.Menus
-            //        .Select(mi => new MenuDTO
-            //        {
-            //            Name = mi.Name,
-            //            Address = mi.Restaurant.Address,
-            //            Phone = mi.Restaurant.Phone,
-            //            Email = mi.Restaurant.Email,
-            //            Description = mi.Description,
-            //            Rating = (double)mi.Restaurant.Rating
-            //        })
-            //        .ToListAsync();
-
-            return Ok();
+            var menuItems = await _menuRepository.GetMenusAsync();
+            return Ok(menuItems);
         }
 
+        [HttpPost("GetMenuByIdAsync")]
+        [Authorize(Roles = AppRole.Admin)]
 
-        //[Authorize(Roles = AppRole.User)]
-        //[HttpGet("test")]
-        //public IActionResult test()
-        //{
-        //    return Ok();
-        //}
+        public async Task<ActionResult> GetMenuByIdAsync([FromBody] int id)
+        {
+            var result = await _menuRepository.GetMenuByIdAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPost("AddMenuAsync")]
+        [Authorize(Roles = AppRole.Admin)]
+
+        public async Task<ActionResult> AddMenuAsync([FromBody] Menu menu)
+        {
+            var result = await _menuRepository.AddMenuAsync(menu);
+            return Ok(result);
+        }
+
+        [HttpPost("UpdateMenuAsync")]
+        [Authorize(Roles = AppRole.Admin)]
+
+        public async Task<ActionResult> UpdateMenuAsync(int id, [FromBody] MenuDTO menu)
+        {
+            var result = await _menuRepository.UpdateMenuAsync(id ,menu);
+            return Ok(result);
+        }
+
+        [HttpPost("DeleteMenuAsync")]
+        [Authorize(Roles = AppRole.Admin)]
+
+        public async Task<ActionResult> DeleteMenuAsync([FromBody] int id)
+        {
+            var result = await _menuRepository.DeleteMenuAsync(id);
+            return Ok(result);
+        }
 
     }
 }

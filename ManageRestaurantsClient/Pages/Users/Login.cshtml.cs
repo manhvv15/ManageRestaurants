@@ -30,6 +30,12 @@ namespace ManageRestaurantsClient.Pages.Users
                     var responseString = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<UserDTO>(responseString);
                     // Lưu token vào cookie
+                    Response.Cookies.Append("UserId", result.UserId.ToString(), new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        Expires = DateTime.UtcNow.AddHours(1)
+                    });
                     Response.Cookies.Append("AuthToken", result.Token, new CookieOptions
                     {
                         HttpOnly = true,

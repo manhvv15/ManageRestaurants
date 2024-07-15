@@ -1,6 +1,7 @@
 ﻿using ManageRestaurant.Helper;
 using ManageRestaurant.Interface;
 using ManageRestaurant.Models;
+using ManageRestaurant.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -84,6 +85,44 @@ namespace ManageRestaurant.Repository
         public async Task<User> GetUserById(int userId)
         {
             return await _context.Users.FindAsync(userId);
+        }
+
+        public async Task<IEnumerable<User>> GetAllAsync()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
+        public async Task<int> CreateAsync(User user)
+        {
+            if (!IsValidEmail(user.Email))
+                throw new ArgumentException("Invalid email format");
+            var hashPassWord = HashPassword(user.Password);
+            user.Password = hashPassWord;
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return user.UserId;
+        }
+
+        public async Task<bool> UpdateAsync(User user)
+        {
+            if (!IsValidEmail(user.Email))
+                throw new ArgumentException("Invalid email format");
+            var hashPassWord = HashPassword(user.Password);
+            user.Password = hashPassWord;
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return false;
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
