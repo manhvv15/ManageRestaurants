@@ -92,10 +92,8 @@ namespace ManageRestaurantsClient.Pages.Admin
                 if (response != null)
                 {
                     //booking.Status = isApproved ? "approved" : "canceled";
-                    TempData["Success"] = "Xử lý thành công" ;
+                    TempData["Success"] = "Xử lý thành công";
                 }
-
-              
             }
             catch (Exception ex)
             {

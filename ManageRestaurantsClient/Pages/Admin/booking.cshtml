@@ -110,14 +110,17 @@
                         <td>@booking.Note</td>
                         <td>@booking.Status</td>
                         <td>
-                            @if (booking.Status == "pending")
-                            {
-                                <form method="post">
-                                    <input type="hidden" name="bookingId" value="@booking.BookingId" />
-                                    <button type="submit" formaction="/Admin/Booking?handler=Approve" class="btn btn-success">Approve</button>
-                                    <button type="submit" formaction="/Admin/Booking?handler=Cancel" class="btn btn-danger">Cancel</button>
-                                </form>
-                            }
+                          @if (booking.Status == "pending")
+{
+                        <form method="post">
+        <input type="hidden" name="bookingId" value="@booking.BookingId" />
+        <button type="submit" formaction="/Admin/Booking?handler=Approve" class="btn btn-success">Approve</button>
+        <button type="submit" formaction="/Admin/Booking?handler=Cancel" class="btn btn-danger">Cancel</button>
+    </form>
+} 
+{
+
+}
                         </td>
                     </tr>
                 }

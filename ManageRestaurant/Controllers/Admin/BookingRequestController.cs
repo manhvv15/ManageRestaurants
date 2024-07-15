@@ -12,11 +12,15 @@ namespace ManageRestaurant.Controllers.Admin
     [ApiController]
     public class BookingRequestController : ControllerBase
     {
-        private readonly ManageRestaurantContext context;
+        private readonly ManageRestaurantContext context ;
+        private readonly TableController tableController;
+        DateTime reservationDate;
+
         Email email = new Email();
         public BookingRequestController(ManageRestaurantContext context)
         {
             this.context = context;
+            this.tableController = new TableController(context);
         }
         [HttpGet]
         [Authorize(Roles = "Admin")]
@@ -95,7 +99,7 @@ namespace ManageRestaurant.Controllers.Admin
             }
             if (isApproved)
             {
-
+                var avaibilityRsult = await tableController.CheckAvailability(reservationDate) as OkObjectResult;
                 booking.Status = "completed";
                 body = "Dat ban thanh cong";
                // email.SendEmail(toEmail, subject, body);
@@ -119,6 +123,5 @@ namespace ManageRestaurant.Controllers.Admin
             return Ok(new { message = "Booking status updated successfully" });
         }
 
-        // table : get List , nhap gio 
     }
 }
