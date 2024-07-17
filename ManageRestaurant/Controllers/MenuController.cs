@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 namespace ManageRestaurant.Controllers
 {
@@ -38,13 +40,63 @@ namespace ManageRestaurant.Controllers
             return Ok();
         }
 
+        [HttpPost("importExcel")]
+        public async Task<IActionResult> ImportMenusFromExcel(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("Please upload a valid Excel file.");
 
-        //[Authorize(Roles = AppRole.User)]
-        //[HttpGet("test")]
-        //public IActionResult test()
-        //{
-        //    return Ok();
-        //}
+            var menus = new List<Menu>();
+            var errors = new List<MenuError>();
 
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+                stream.Position = 0;
+
+                IWorkbook workbook = new XSSFWorkbook(stream);
+                ISheet sheet = workbook.GetSheetAt(0);
+
+                for (int rowIndex = 1; rowIndex <= sheet.LastRowNum; rowIndex++)
+                {
+                    IRow row = sheet.GetRow(rowIndex);
+                    if (row == null) continue;
+
+                    try
+                    {
+                        var menu = new Menu
+                        {
+                            Name = row.GetCell(1)?.ToString() ?? string.Empty,
+                            Description = row.GetCell(2)?.ToString() ?? string.Empty,
+                            Price = row.GetCell(3) != null && decimal.TryParse(row.GetCell(3).ToString(), out decimal price) ? price : 0,
+                            ImageUrl = row.GetCell(4)?.ToString() ?? string.Empty
+                        };
+
+                        menus.Add(menu);
+                    }
+                    catch (Exception ex)
+                    {
+                        errors.Add(new MenuError
+                        {
+                            NameDuLieu = "Menu Data",
+                            ViTri = $"Row {rowIndex}",
+                            ThuocTinh = "Unknown",
+                            DienGiai = ex.Message,
+                            RowError = rowIndex.ToString()
+                        });
+                    }
+                }
+            }
+
+            if (errors.Count > 0)
+            {
+                return BadRequest(new { Message = "Errors occurred during import", Errors = errors });
+            }
+
+            await context.Menus.AddRangeAsync(menus);
+            await context.SaveChangesAsync();
+
+            return Ok("Menus imported successfully.");
+        }
     }
 }

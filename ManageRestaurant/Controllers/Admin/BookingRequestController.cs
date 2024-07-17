@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NPOI.XSSF.UserModel;
 
 namespace ManageRestaurant.Controllers.Admin
 {
@@ -122,6 +123,51 @@ namespace ManageRestaurant.Controllers.Admin
 
             return Ok(new { message = "Booking status updated successfully" });
         }
+        [HttpGet("exportExcel")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ExportBookingsToExcel()
+        {
+            var bookings = await context.BookingRequests
+                .Include(t => t.Table)
+                .Include(u => u.User)
+                .ToListAsync();
 
+            var workbook = new XSSFWorkbook();
+            var sheet = workbook.CreateSheet("Bookings");
+            var headerRow = sheet.CreateRow(0);
+
+            var headers = new string[] { "BookingId", "UserId", "UserName", "Email", "TableId", "TableNumber", "ReservationDate", "NumberOfGuests", "Status", "Note" };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                headerRow.CreateCell(i).SetCellValue(headers[i]);
+            }
+
+            for (int i = 0; i < bookings.Count; i++)
+            {
+                var row = sheet.CreateRow(i + 1);
+                var booking = bookings[i];
+
+                row.CreateCell(0).SetCellValue(booking.BookingId);
+                row.CreateCell(1).SetCellValue(booking.UserId ?? 0);
+                row.CreateCell(2).SetCellValue(booking.User.UserName ?? string.Empty);
+                row.CreateCell(3).SetCellValue(booking.User.Email);
+                row.CreateCell(4).SetCellValue(booking.TableId ?? 0);
+                row.CreateCell(5).SetCellValue(booking.Table.TableNumber);
+                row.CreateCell(6).SetCellValue(booking.ReservationDate.ToString("yyyy-MM-dd HH:mm:ss"));
+                row.CreateCell(7).SetCellValue(booking.NumberOfGuests);
+                row.CreateCell(8).SetCellValue(booking.Status);
+                row.CreateCell(9).SetCellValue(booking.Note);
+            }
+            using (var exportData = new MemoryStream())
+            {
+                workbook.Write(exportData);
+                var bytes = exportData.ToArray();
+
+                var fileName = "Bookings.xlsx";
+                Response.Headers["Content-Disposition"] = $"attachment; filename={fileName}";
+
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
     }
 }
