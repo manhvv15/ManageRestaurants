@@ -14,6 +14,7 @@ namespace ManageRestaurantsClient.Pages.Admin
         private readonly HttpClient _httpClient = new HttpClient();
         public List<BookingRequestDTO.BookingList> BookingList { get; set; }
         public List<BookingRequestDTO.Booking> Bookings { get; set; } = new List<BookingRequestDTO.Booking>();
+        public List<int> AvailableTableIds { get; set; } = new List<int>();
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
         public class PagedResult<T>
@@ -72,8 +73,33 @@ namespace ManageRestaurantsClient.Pages.Admin
         }
         public async Task<IActionResult> OnPostApproveAsync(int bookingId)
         {
-            return await ChangeBookingStatusAsync(bookingId, true);
+            DateTime d = new DateTime(2024, 7, 21, 19, 0, 0);
+            return await GetAvailableTableId(d);
         }
+        private async Task<IActionResult> GetAvailableTableId(DateTime reservationDate)
+        {
+            try
+            {
+                var token = Request.Cookies["AuthToken"];
+                var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:5000/api/Table/GetAvailableTableId?reservationDate={reservationDate}");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var responseData = await response.Content.ReadAsStringAsync();
+                if (responseData != null)
+                {
+                    AvailableTableIds = JsonConvert.DeserializeObject<List<int>>(responseData);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                TempData["Error"] = "An error occurred while updating the booking status.";
+            }
+
+            return RedirectToPage("/Admin/Booking");
+        }
+
         public async Task<IActionResult> OnPostCancelAsync(int bookingId)
         {
             return await ChangeBookingStatusAsync(bookingId, false);

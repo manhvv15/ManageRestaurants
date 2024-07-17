@@ -19,10 +19,10 @@ namespace ManageRestaurant.Controllers.Admin
         public TableController(ManageRestaurantContext context)
         {
             this.context = context;
-          //  this.reservaDate = reservationDate;
+            //  this.reservaDate = reservationDate;
         }
         [HttpGet("CheckTableAvailability")]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> CheckAvailability(DateTime reservationDate)
         {
             if (reservationDate != null)
@@ -33,10 +33,10 @@ namespace ManageRestaurant.Controllers.Admin
 
             TotalTables = context.Tables.Count();
             // Lấy danh sách các bàn đã được đặt vào ngày đó
-            var reservedTables = await context.BookingRequests
-         .Where(b => b.ReservationDate == reservationDate)
-         .Select(b => b.TableId)
-         .ToListAsync();
+            var reservedTables = await context.Reserveds
+        .Where(r => r.ReservedDate.Date == reservationDate.Date)
+        .Select(r => r.TableId)
+        .ToListAsync();
 
             // Tạo danh sách tất cả các bàn
             var allTables = Enumerable.Range(1, TotalTables).ToList();
@@ -53,7 +53,7 @@ namespace ManageRestaurant.Controllers.Admin
             return Ok(tableStatuses);
         }
         List<int> ListIdAvai = new List<int>();
-        [HttpPut]
+        [HttpPut("updateStatusBooking")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> updateStatusBooking(int bookingId, bool isApproved)
         {
@@ -67,63 +67,74 @@ namespace ManageRestaurant.Controllers.Admin
             }
             if (isApproved)
             {
-                int? selectedTableId = await GetAvailableTableId(booking.ReservationDate);
-                if (selectedTableId.HasValue)
-                {
-                    UpdateBookingWithTable(booking, selectedTableId.Value);
-                    body = "Dat ban thanh cong";
-                    //email.SendEmail(toEmail, subject, body);
-                }
-                //var availabilityResult = await CheckAvailability(booking.ReservationDate) as OkObjectResult;
+                var tableListID = await GetAvailableTableId(booking.ReservationDate);
+                return Ok(new { tableListID = tableListID });
 
-                //int idTableSelect = 1;
-                //if (availabilityResult == null)
-                //{
-                //    return BadRequest(new { message = "Error checking table availability" });
-                //}
-
-                //var availableTables = ((IEnumerable<dynamic>)availabilityResult.Value)
-                //    .Where(t => t.IsAvailable)
-                //    .ToList();
-
-                //if (availableTables.Count > 0)
-                //{
-                //    int selectedTableId = availableTables.First().TableId;
-                //    booking.TableId = selectedTableId;
-                //    booking.Status = "completed";
-                //    body = "Dat ban thanh cong";
-                //    // email.SendEmail(toEmail, subject, body);
-                //}
             }
             else
             {
                 body = "Dat ban that bai";
                 //  email.SendEmail(toEmail, subject, body);
+                //body = "Dat ban thanh cong";
+                //    //email.SendEmail(toEmail, subject, body);
                 booking.Status = "canceled";
+                context.BookingRequests.Update(booking);
+                await context.SaveChangesAsync();
+                return Ok(new { message = "Booking is canceled" });
+
             }
-            context.BookingRequests.Update(booking);
+        }
+        [HttpPut("updateApproveTable")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> UpdateApproveTable(int tableId, DateTime reservationDate)
+        {
+            var booking = await context.BookingRequests.FirstOrDefaultAsync(b => b.ReservationDate == reservationDate);
+            if (booking == null)
+            {
+                return NotFound(new { message = "No pending booking found for the specified table ID and reservation date" });
+            }
+            var reserved = await context.Reserveds
+         .FirstOrDefaultAsync(b => b.ReservedDate == reservationDate );
+            var newReservation = new Reserved
+            {
+                TableId = tableId,
+                ReservedDate = reservationDate,
+                BookingId = booking.BookingId
+            };
+            context.Reserveds.Add(newReservation);
+            booking.Status = "completed";
+            // string toEmail = booking.CustomerEmail; // Assuming you have the customer's email
+            // string subject = "Booking Confirmation";
+            // string body = "Your booking has been successfully completed.";
+            // email.SendEmail(toEmail, subject, body);
             await context.SaveChangesAsync();
 
-            return Ok(new { message = "Booking status updated successfully" });
+            return Ok(new { message = "Booking status updated to completed" });
         }
-        private async Task<int?> GetAvailableTableId(DateTime reservationDate)
+        [HttpGet("GetAvailableTableId")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<List<int>>> GetAvailableTableId(DateTime reservationDate)
         {
             var availabilityResult = await CheckAvailability(reservationDate) as OkObjectResult;
             if (availabilityResult == null)
             {
-                return null;
+                return NotFound();
             }
 
             var availableTables = ((IEnumerable<dynamic>)availabilityResult.Value)
                 .Where(t => t.IsAvailable)
                 .ToList();
 
+            List<int> listTableId = new List<int>();
             if (availableTables.Count > 0)
             {
-                return availableTables.First().TableId;
+                foreach (var table in availableTables)
+                {
+                    listTableId.Add(table.TableId);
+                }
             }
 
-            return null;
+            return Ok(listTableId);
         }
 
         private void UpdateBookingWithTable(BookingRequest booking, int tableId)
