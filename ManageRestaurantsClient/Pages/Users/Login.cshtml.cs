@@ -44,7 +44,7 @@ namespace ManageRestaurantsClient.Pages.Users
                     });
                     //var user =
                     TempData["Message"] = result.Message;
-                    if (result.Role == "Admin")
+                    if (result.Role == "Admin" || result.Role == "Staff")
                     {
                         return RedirectToPage("/Admin/home");
                     }

@@ -4,8 +4,10 @@
     ViewData["Title"] = "Menu Page";
     var isAuthenticated = Request.Cookies.ContainsKey("AuthToken");
     string authToken = string.Empty;
+    string userId = string.Empty;
     if (isAuthenticated)
     {
+        userId = Request.Cookies["UserId"];
         authToken = Request.Cookies["AuthToken"];
     }
 }
@@ -66,16 +68,27 @@
                     <span class="fa fa-bars"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <div class="navbar-nav ms-auto py-0 pe-4">
-                        <a href="index.html" class="nav-item nav-link active">Home</a>
-                        <a href="about.html" class="nav-item nav-link">Order</a>
+                    <div class="navbar-nav ms-auto py-0 pe-4" style="align-items:center">
+                        <a href="/admin/home" class="nav-item nav-link active">Home</a>
+                        <a href="/admin/order" class="nav-item nav-link">Order</a>
                         <a href="/admin/menu" class="nav-item nav-link">Menu</a>
-                        <a href="menu.html" class="nav-item nav-link">Booking</a>
-                        <a href="menu.html" class="nav-item nav-link">User</a>
-                        <a href="menu.html" class="nav-item nav-link">Report</a>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                        <a href="/admin/booking" class="nav-item nav-link">Booking</a>
+                        <a href="/admin/user" class="nav-item nav-link">User</a>
+                        <a href="/admin/report" class="nav-item nav-link">Report</a>
+                        <a href="/admin/contact" class="nav-item nav-link">Contact</a>
+                        <a href="/admin/profile" class="nav-item nav-link">
+                            <img src="/img/hero.png" alt="Profile Icon" style="width: 40px; height: 40px;  margin-right: 8px;">
+                            Profile
+                        </a>
                     </div>
-                    <a href="/Users/Login" class="btn btn-primary py-2 px-4">Sign In</a>
+                    @if (isAuthenticated)
+                    {
+                        <a class="btn btn-primary py-2 px-4" href="/Users/Logout">Sign Out</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary py-2 px-4" href="/Users/Login">Sign In</a>
+                    }
                 </div>
             </nav>
 
@@ -118,7 +131,7 @@
                             </a>
                         </li>
                         <li class="nav-item ms-auto">
-                            <a class="nav-link create-btn" href="#" data-bs-toggle="modal" data-bs-target="#createItemModal">
+                            <a class="nav-link create-btn" id="createBtn" href="#" data-bs-toggle="modal" data-bs-target="#createItemModal">
                                 <i class="fa fa-plus-circle fa-2x text-success"></i>
                             </a>
                         </li>
@@ -397,6 +410,8 @@
     <script>
         $(document).ready(function () {
             menu.jwtToken = '@authToken';
+            menu.userId = '@Convert.ToInt32(userId)';
+            menu.getUserInfo();
             menu.getMenus();
         });
     </script>

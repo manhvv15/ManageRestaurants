@@ -66,6 +66,7 @@
 
             const result = await response.json();
             let tableSelectContainer = document.getElementById('tableSelectContainer');
+            alert('Booking successfully');
             document.getElementById('datetime').value = '';
             document.getElementById('numberOfPeople').value = '';
             document.getElementById('message').value = '';
