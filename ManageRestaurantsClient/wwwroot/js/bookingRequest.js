@@ -99,6 +99,7 @@ async function showTableSelect() {
                 throw new Error('Failed to fetch tables');
             }
 
+
             const tables = await response.json();
 
             tableSelect.innerHTML = '';
