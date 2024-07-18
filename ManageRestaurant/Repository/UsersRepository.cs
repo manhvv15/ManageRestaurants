@@ -1,4 +1,5 @@
-﻿using ManageRestaurant.Helper;
+﻿using ManageRestaurant.DTO;
+using ManageRestaurant.Helper;
 using ManageRestaurant.Interface;
 using ManageRestaurant.Models;
 using ManageRestaurant.Services;
@@ -103,14 +104,30 @@ namespace ManageRestaurant.Repository
             return user.UserId;
         }
 
-        public async Task<bool> UpdateAsync(User user)
+        public async Task<bool> UpdateAsync(int userId, UserDTO userDTO)
         {
-            if (!IsValidEmail(user.Email))
+            if (!IsValidEmail(userDTO.Email))
                 throw new ArgumentException("Invalid email format");
-            var hashPassWord = HashPassword(user.Password);
-            user.Password = hashPassWord;
-            _context.Entry(user).State = EntityState.Modified;
+
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId); ;
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.Email = userDTO.Email;
+
+            if (!string.IsNullOrWhiteSpace(userDTO.Password))
+            {
+                user.Password = HashPassword(userDTO.Password);
+            }
+
+            user.Phone = userDTO.Phone;
+            user.UserName = userDTO.UserName;
+            user.Role = userDTO.Role;
+
             await _context.SaveChangesAsync();
+
             return true;
         }
 

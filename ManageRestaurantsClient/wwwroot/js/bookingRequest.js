@@ -36,7 +36,7 @@
         try {
             let reservationDate = new Date(document.getElementById('datetime').value).toISOString();
             let numberOfGuests = parseInt(document.getElementById('numberOfPeople').value);
-            let status = 'Pending';
+            let status = 'new';
             let note = document.getElementById('message').value;
             let userId = this.userInfo.userId;
             let tableSelect = document.getElementById('tableSelect');
@@ -66,6 +66,7 @@
 
             const result = await response.json();
             let tableSelectContainer = document.getElementById('tableSelectContainer');
+            alert('Booking successfully');
             document.getElementById('datetime').value = '';
             document.getElementById('numberOfPeople').value = '';
             document.getElementById('message').value = '';

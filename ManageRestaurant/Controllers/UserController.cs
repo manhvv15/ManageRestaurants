@@ -1,4 +1,5 @@
-﻿using ManageRestaurant.Helper;
+﻿using ManageRestaurant.DTO;
+using ManageRestaurant.Helper;
 using ManageRestaurant.Interface;
 using ManageRestaurant.Models;
 using ManageRestaurant.Repository;
@@ -30,7 +31,7 @@ namespace ManageRestaurant.Controllers
         }
 
         [HttpGet("GetAll")]
-        [Authorize(Roles = AppRole.Admin)]
+        [Authorize]
         public async Task<ActionResult<List<User>>> GetAll()
         {
             var users = await _usersRepository.GetAllAsync();
@@ -51,21 +52,17 @@ namespace ManageRestaurant.Controllers
         }
 
         // POST api/users/{userId} (Update)
-        [HttpPost("{UpdateUser}")]
+        [HttpPost("UpdateUser/{userId}")]
         [Authorize(Roles = AppRole.Admin)]
-        public async Task<ActionResult> UpdateUser(int userId, [FromBody] User user)
+        public async Task<ActionResult> UpdateUser(int userId, [FromBody] UserDTO userDTO)
         {
-            if (userId != user.UserId)
-            {
-                return BadRequest("User ID mismatch");
-            }
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var result = await _usersRepository.UpdateAsync(user);
+            var result = await _usersRepository.UpdateAsync(userId,userDTO);
             if (!result)
             {
                 return NotFound();
