@@ -23,6 +23,10 @@
             }
 
             this.userInfo = await response.json();
+            if (this.userInfo.role !== "Admin") {
+                $('#createUserBtn').addClass('d-none');
+                $('#actionForAdmin').addClass('d-none');
+            }
             return this.userInfo;
         } catch (error) {
             console.error('Fetch request failed:', error);
@@ -32,6 +36,8 @@
 
     async loadUsers() {
         try {
+            await this.getUserInfo();
+
             const response = await fetch('https://localhost:5000/api/User/GetAll', {
                 method: 'GET',
                 headers: {
@@ -51,16 +57,18 @@
 
             users.forEach(user => {
                 const row = `<tr>
-                            <td>${user.userName}</td>
-                            <td>${user.email}</td>
-                            <td>${user.role}</td>
-                            <td>${user.balance ?? ''}</td>
-                            <td>${user.phone ?? ''}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" onclick="userForAdmin.openEditModal(${user.userId})" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
-                                <button class="btn btn-sm btn-danger" onclick="userForAdmin.deleteUser(${user.userId})">Delete</button>
-                            </td>
-                        </tr>`;
+                        <td>${user.userName}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td>${user.balance ?? ''}</td>
+                        <td>${user.phone ?? ''}</td>
+                        ${this.userInfo.role === 'Admin' ? `
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="userForAdmin.openEditModal(${user.userId})" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="userForAdmin.deleteUser(${user.userId})">Delete</button>
+                        </td>
+                        ` : ''}
+                    </tr>`;
                 tbody.innerHTML += row;
             });
         } catch (error) {
@@ -162,16 +170,15 @@
 
         try {
             const updatedUser = {
-                userId: userId,
                 userName: username,
                 email: email,
                 password: password,
                 role: role,
-                phoneNumber: phoneNumber
+                phone: phoneNumber
             };
 
             const response = await fetch(`https://localhost:5000/api/User/UpdateUser/${userId}`, {
-                method: 'PUT',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${this.jwtToken}`

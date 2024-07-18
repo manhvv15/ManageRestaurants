@@ -30,7 +30,7 @@ namespace ManageRestaurant.Controllers
         }
 
         [HttpPost("GetMenuByIdAsync")]
-        [Authorize(Roles = AppRole.Admin)]
+        [Authorize(Roles = $"{AppRole.Admin},{AppRole.Staff}")]
 
         public async Task<ActionResult> GetMenuByIdAsync([FromBody] int id)
         {
@@ -39,7 +39,7 @@ namespace ManageRestaurant.Controllers
         }
 
         [HttpPost("AddMenuAsync")]
-        [Authorize(Roles = AppRole.Admin)]
+        [Authorize(Roles = $"{AppRole.Admin},{AppRole.Staff}")]
 
         public async Task<ActionResult> AddMenuAsync([FromBody] Menu menu)
         {
@@ -48,7 +48,7 @@ namespace ManageRestaurant.Controllers
         }
 
         [HttpPost("UpdateMenuAsync")]
-        [Authorize(Roles = AppRole.Admin)]
+        [Authorize(Roles = $"{AppRole.Admin},{AppRole.Staff}")]
 
         public async Task<ActionResult> UpdateMenuAsync(int id, [FromBody] MenuDTO menu)
         {
@@ -57,7 +57,7 @@ namespace ManageRestaurant.Controllers
         }
 
         [HttpPost("DeleteMenuAsync")]
-        [Authorize(Roles = AppRole.Admin)]
+        [Authorize(Roles = $"{AppRole.Admin},{AppRole.Staff}")]
 
         public async Task<ActionResult> DeleteMenuAsync([FromBody] int id)
         {

@@ -1,4 +1,5 @@
-﻿using ManageRestaurant.Models;
+﻿using ManageRestaurant.DTO;
+using ManageRestaurant.Models;
 
 namespace ManageRestaurant.Interface
 {
@@ -9,7 +10,7 @@ namespace ManageRestaurant.Interface
         Task<User> GetUserById(int userId);
         Task<IEnumerable<User>> GetAllAsync();
         Task<int> CreateAsync(User user);
-        Task<bool> UpdateAsync(User user);
+        Task<bool> UpdateAsync(int userId,UserDTO user);
         Task<bool> DeleteAsync(int userId);
     }
 }
