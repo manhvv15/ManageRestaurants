@@ -5,9 +5,11 @@
     var isAuthenticated = Request.Cookies.ContainsKey("AuthToken");
     string authToken = string.Empty;
     string userId = string.Empty;
+    string role = string.Empty;
     if (isAuthenticated)
     {
         userId = Request.Cookies["UserId"];
+        role = Request.Cookies["Role"];
         authToken = Request.Cookies["AuthToken"];
     }
 }
@@ -68,19 +70,43 @@
                     <span class="fa fa-bars"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <div class="navbar-nav ms-auto py-0 pe-4" style="align-items:center">
-                        <a href="/admin/home" class="nav-item nav-link active">Home</a>
-                        <a href="/admin/order" class="nav-item nav-link">Order</a>
-                        <a href="/admin/menu" class="nav-item nav-link">Menu</a>
-                        <a href="/admin/booking" class="nav-item nav-link">Booking</a>
-                        <a href="/admin/user" class="nav-item nav-link">User</a>
-                        <a href="/admin/report" class="nav-item nav-link">Report</a>
-                        <a href="/admin/contact" class="nav-item nav-link">Contact</a>
-                        <a href="/admin/profile" class="nav-item nav-link">
-                            <img src="/img/hero.png" alt="Profile Icon" style="width: 40px; height: 40px;  margin-right: 8px;">
-                            Profile
-                        </a>
-                    </div>
+                    @if (role == "User")
+                    {
+                        <div class="navbar-nav ms-auto py-0 pe-4" style="align-items:center">
+                            <a href="index.html" class="nav-item nav-link active">Home</a>
+                            <a href="about.html" class="nav-item nav-link">About</a>
+                            <a href="service.html" class="nav-item nav-link">Service</a>
+                            <a href="/admin/menu" class="nav-item nav-link">Menu</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Booking</a>
+                                <div class="dropdown-menu m-0">
+                                    <a href="/Users/Booking" class="dropdown-item">Booking table</a>
+                                    <a href="team.html" class="dropdown-item">Booking History</a>
+                                </div>
+                            </div>
+                            <a href="contact.html" class="nav-item nav-link">Contact</a>
+                            <a href="contact.html" class="nav-item nav-link">
+                                <img src="/img/hero.png" alt="Profile Icon" style="width: 40px; height: 40px;  margin-right: 8px;">
+                                Profile
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="navbar-nav ms-auto py-0 pe-4" style="align-items:center">
+                            <a href="/admin/home" class="nav-item nav-link active">Home</a>
+                            <a href="/admin/order" class="nav-item nav-link">Order</a>
+                            <a href="/admin/menu" class="nav-item nav-link">Menu</a>
+                            <a href="/admin/booking" class="nav-item nav-link">Booking</a>
+                            <a href="/admin/user" class="nav-item nav-link">User</a>
+                            <a href="/admin/report" class="nav-item nav-link">Report</a>
+                            <a href="/admin/contact" class="nav-item nav-link">Contact</a>
+                            <a href="/admin/profile" class="nav-item nav-link">
+                                <img src="/img/hero.png" alt="Profile Icon" style="width: 40px; height: 40px;  margin-right: 8px;">
+                                Profile
+                            </a>
+                        </div>
+                    }
                     @if (isAuthenticated)
                     {
                         <a class="btn btn-primary py-2 px-4" href="/Users/Logout">Sign Out</a>
@@ -140,111 +166,109 @@
                         <div id="tab-1" class="tab-pane fade show p-0 active">
                             <div class="row g-4 container" id="menu-container">
                                 @* <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="img/menu-1.jpg" alt="" style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
-                                        </div>
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-1.jpg" alt="" style="width: 80px;">
+                                <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                <span>Chicken Burger</span>
+                                <span class="text-primary">$115</span>
+                                </h5>
+                                <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
+                                </div>
+                                </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="img/menu-2.jpg" alt="" style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
-                                        </div>
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-2.jpg" alt="" style="width: 80px;">
+                                <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                <span>Chicken Burger</span>
+                                <span class="text-primary">$115</span>
+                                </h5>
+                                <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
+                                </div>
+                                </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="img/menu-3.jpg" alt="" style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
-                                        </div>
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-3.jpg" alt="" style="width: 80px;">
+                                <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                <span>Chicken Burger</span>
+                                <span class="text-primary">$115</span>
+                                </h5>
+                                <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
+                                </div>
+                                </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="img/menu-4.jpg" alt="" style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
-                                        </div>
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-4.jpg" alt="" style="width: 80px;">
+                                <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                <span>Chicken Burger</span>
+                                <span class="text-primary">$115</span>
+                                </h5>
+                                <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
+                                </div>
+                                </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="img/menu-5.jpg" alt="" style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
-                                        </div>
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-5.jpg" alt="" style="width: 80px;">
+                                <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                <span>Chicken Burger</span>
+                                <span class="text-primary">$115</span>
+                                </h5>
+                                <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
+                                </div>
+                                </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="img/menu-6.jpg" alt="" style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
-                                        </div>
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-6.jpg" alt="" style="width: 80px;">
+                                <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                <span>Chicken Burger</span>
+                                <span class="text-primary">$115</span>
+                                </h5>
+                                <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
+                                </div>
+                                </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="img/menu-7.jpg" alt="" style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
-                                        </div>
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-7.jpg" alt="" style="width: 80px;">
+                                <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                <span>Chicken Burger</span>
+                                <span class="text-primary">$115</span>
+                                </h5>
+                                <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
+                                </div>
+                                </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="img/menu-8.jpg" alt="" style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
-                                        </div>
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-8.jpg" alt="" style="width: 80px;">
+                                <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                <span>Chicken Burger</span>
+                                <span class="text-primary">$115</span>
+                                </h5>
+                                <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo diam</small>
+                                </div>
+                                </div>
                                 </div> *@
                             </div>
                         </div>
                         <div id="tab-2" class="tab-pane fade show p-0">
                             <div class="row g-4">
-                                
                             </div>
                         </div>
                         <div id="tab-3" class="tab-pane fade show p-0">
                             <div class="row g-4">
-                                
                             </div>
                         </div>
                     </div>
@@ -411,11 +435,10 @@
         $(document).ready(function () {
             menu.jwtToken = '@authToken';
             menu.userId = '@Convert.ToInt32(userId)';
-            menu.getUserInfo();
             menu.getMenus();
         });
     </script>
-    
+
     <!-- Template Javascript -->
 </body>
 

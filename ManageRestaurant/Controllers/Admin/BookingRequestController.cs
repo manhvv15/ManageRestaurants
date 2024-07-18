@@ -140,7 +140,7 @@ namespace ManageRestaurant.Controllers.Admin
                     return NotFound();
                 }
 
-                booking.Status = "Approved";
+                booking.Status = "pending";
                 await _bookingRequestRepository.UpdateBookingAsync(booking);
 
                 return Ok("Booking confirmed successfully!");

@@ -33,6 +33,8 @@
         }
     }
     async getMenus() {
+        await this.getUserInfo();
+
         try {
             const response = await fetch('https://localhost:5000/api/Menu/GetMenusAsync', {
                 method: 'GET',
