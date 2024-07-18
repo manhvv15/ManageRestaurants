@@ -1,0 +1,54 @@
+﻿@page
+@model ManageRestaurantsClient.Pages.Admin.dashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div id="booking-statistics"></div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-chartjs-2"></script>
+    <script type="text/babel">
+        const { useEffect, useState } = React;
+        const { Pie } = reactChartjs2;
+
+        const BookingStatistics = ({ data }) => {
+            const getChartData = (data) => ({
+                labels: ['New', 'Pending', 'Cancelled', 'Completed'],
+                datasets: [{
+                    data: [data.New, data.Pending, data.Cancelled, data.Completed],
+                    backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384', '#4BC0C0']
+                }]
+            });
+
+            return (
+                <div>
+                    <h2>Booking Statistics</h2>
+                    <div>
+                        <h3>Today</h3>
+                        <Pie data={getChartData(data.Today)} />
+                    </div>
+                    <div>
+                        <h3>Last Week</h3>
+                        <Pie data={getChartData(data.LastWeek)} />
+                    </div>
+                    <div>
+                        <h3>Last Month</h3>
+                        <Pie data={getChartData(data.LastMonth)} />
+                    </div>
+                </div>
+            );
+        };
+
+        const statisticsData = @Html.Raw(Model.BookingStatistics.ToString());
+
+        ReactDOM.render(
+            <BookingStatistics data={statisticsData} />,
+            document.getElementById('booking-statistics')
+        );
+    </script>
+}

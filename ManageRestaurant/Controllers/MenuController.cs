@@ -1,6 +1,7 @@
 ﻿using ManageRestaurant.DTO;
 using ManageRestaurant.Helper;
 using ManageRestaurant.Models;
+using ManageRestaurant.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,9 @@ namespace ManageRestaurant.Controllers
             return Ok();
         }
 
+
         [HttpPost("importExcel")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportMenusFromExcel(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -56,6 +59,13 @@ namespace ManageRestaurant.Controllers
 
                 IWorkbook workbook = new XSSFWorkbook(stream);
                 ISheet sheet = workbook.GetSheetAt(0);
+                Excel excel = new Excel();
+                // Use CheckFileMau function to validate the file
+                string validationMessage = excel.CheckFileMau(sheet, "Menu", 2);
+                if (!string.IsNullOrEmpty(validationMessage))
+                {
+                    return BadRequest(validationMessage);
+                }
 
                 for (int rowIndex = 1; rowIndex <= sheet.LastRowNum; rowIndex++)
                 {
@@ -66,10 +76,10 @@ namespace ManageRestaurant.Controllers
                     {
                         var menu = new Menu
                         {
-                            Name = row.GetCell(1)?.ToString() ?? string.Empty,
-                            Description = row.GetCell(2)?.ToString() ?? string.Empty,
-                            Price = row.GetCell(3) != null && decimal.TryParse(row.GetCell(3).ToString(), out decimal price) ? price : 0,
-                            ImageUrl = row.GetCell(4)?.ToString() ?? string.Empty
+                            Name = row.GetCell(0)?.ToString() ?? string.Empty,
+                            Description = row.GetCell(1)?.ToString() ?? string.Empty,
+                            Price = row.GetCell(2) != null && decimal.TryParse(row.GetCell(2).ToString(), out decimal price) ? price : 0,
+                            ImageUrl = row.GetCell(3)?.ToString() ?? string.Empty
                         };
 
                         menus.Add(menu);
@@ -98,5 +108,6 @@ namespace ManageRestaurant.Controllers
 
             return Ok("Menus imported successfully.");
         }
+
     }
 }
