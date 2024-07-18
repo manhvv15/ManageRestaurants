@@ -11,9 +11,9 @@ namespace ManageRestaurantsClient.Pages.Admin
         public JObject BookingStatistics { get; set; }
         public async Task OnGetAsync()
         {
-            var token = Request.Cookies["AuthToken"];
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5000/api/booking/statistics");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var token = Request.Cookies["AuthToken"];             
+            var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:5000/api/BookingRequest/statistics");
+            request.Headers.Add("Authorization", "Bearer " + token);
 
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
