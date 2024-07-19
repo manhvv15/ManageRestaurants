@@ -12,6 +12,8 @@
         role = Request.Cookies["Role"];
         authToken = Request.Cookies["AuthToken"];
     }
+    var successMessage = TempData["Success"] as string;
+    var errorMessage = TempData["Error"] as string;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -48,9 +50,36 @@
     <link href="~/css/style.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .import-button {
+            background-color: #4CAF50; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 10px 20px; /* Some padding */
+            text-align: center; /* Centered text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Make the container inline */
+            font-size: 16px; /* Increase font size */
+            margin: 4px 2px; /* Some margin */
+            cursor: pointer; /* Pointer/hand icon */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px #999; /* Add shadow */
+        }
+
+            .import-button:hover {
+                background-color: #45a049; /* Darker green background on hover */
+            }
+
+            .import-button:active {
+                background-color: #3e8e41; /* Even darker green when pressed */
+                box-shadow: 0 2px #666; /* Reduce shadow */
+                transform: translateY(2px); /* Move it down a bit */
+            }
+    </style>
 </head>
 
 <body>
+   
     <div class="container-xxl bg-white p-0">
         <!-- Spinner Start -->
         <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
@@ -99,8 +128,8 @@
                             <a href="/admin/menu" class="nav-item nav-link">Menu</a>
                             <a href="/admin/booking" class="nav-item nav-link">Booking</a>
                             <a href="/admin/user" class="nav-item nav-link">User</a>
-                            <a href="/admin/report" class="nav-item nav-link">Report</a>
-                            <a href="/admin/contact" class="nav-item nav-link">Contact</a>
+                            <a href="/admin/table" class="nav-item nav-link">Table</a>
+                            <a href="/admin/dashboard" class="nav-item nav-link">Dashboard</a>
                             <a href="/admin/profile" class="nav-item nav-link">
                                 <img src="/img/hero.png" alt="Profile Icon" style="width: 40px; height: 40px;  margin-right: 8px;">
                                 Profile
@@ -160,6 +189,12 @@
                             <a class="nav-link create-btn" id="createBtn" href="#" data-bs-toggle="modal" data-bs-target="#createItemModal">
                                 <i class="fa fa-plus-circle fa-2x text-success"></i>
                             </a>
+                        </li>
+                        <li>
+                            <form method="post" enctype="multipart/form-data" asp-page-handler="ImportExcel">
+                                <input type="file" name="file" />
+                                <button class="import-button" type="submit">Import Excel</button>
+                            </form>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -438,7 +473,20 @@
             menu.getMenus();
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var successMessage = "@successMessage";
+            var errorMessage = "@errorMessage";
 
+            if (successMessage) {
+                alert(successMessage);
+            }
+
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+        });
+    </script>
     <!-- Template Javascript -->
 </body>
 
