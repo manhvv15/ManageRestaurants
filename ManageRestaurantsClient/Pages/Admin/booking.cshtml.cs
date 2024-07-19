@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using static ManageRestaurantsClient.DTO.BookingRequestDTO;
 
 
 
@@ -129,6 +130,30 @@ namespace ManageRestaurantsClient.Pages.Admin
 
             return RedirectToPage("/Admin/Booking");
         }
+        public async Task<IActionResult> OnPostExportExcelAsync()
+        {
+            try
+            {
+                var token = Request.Cookies["AuthToken"];
+                var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:5000/api/BookingRequest/exportExcel");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
 
+                if (response != null)
+                {
+                    var content = await response.Content.ReadAsByteArrayAsync();
+                    var fileName = response.Content.Headers.ContentDisposition.FileName.Trim('"');
+                    return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                TempData["Error"] = "An error occurred while updating the booking status.";
+            }
+
+            return RedirectToPage("/Admin/Booking");
+        }
     }
 }

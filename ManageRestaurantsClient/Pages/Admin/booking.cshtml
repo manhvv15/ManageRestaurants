@@ -75,7 +75,9 @@
         </div>
     </header>
     <h1>@ViewData["Title"]</h1>
-
+<form method="post" asp-page-handler="ExportExcel">
+    <button type="submit">Export to Excel</button>
+</form>
     @if (Model.Bookings == null || !Model.Bookings.Any())
     {
         <p>No bookings found.</p>
