@@ -8,7 +8,7 @@ namespace ManageRestaurantsClient.Pages.Users
     public class BookingHistoryModel : PageModel
     {
         private readonly HttpClient _httpClient = new HttpClient();
-        public List<BookingRequestDTO> Bookings { get; set; }
+        public List<BookingRequestDTO.Booking> Bookings { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -21,7 +21,7 @@ namespace ManageRestaurantsClient.Pages.Users
                 var responseData = await response.Content.ReadAsStringAsync();
                 if (responseData != null)
                 {
-                    Bookings = JsonConvert.DeserializeObject<List<BookingRequestDTO>>(responseData);
+                    Bookings = JsonConvert.DeserializeObject<List<BookingRequestDTO.Booking>>(responseData);
 
                 }
             }

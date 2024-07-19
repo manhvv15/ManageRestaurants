@@ -10,5 +10,6 @@
         public string? Note { get; set; }
         public bool? IsDeposited { get; set; }
         public int? depositAmount { get; set; }
+
     }
 }
