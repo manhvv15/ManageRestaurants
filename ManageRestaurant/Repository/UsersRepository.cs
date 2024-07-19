@@ -133,10 +133,12 @@ namespace ManageRestaurant.Repository
 
         public async Task<bool> DeleteAsync(int userId)
         {
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _context.Users
+                .Include(u => u.BookingRequests) 
+                .FirstOrDefaultAsync(u => u.UserId == userId);
             if (user == null)
                 return false;
-
+            _context.BookingRequests.RemoveRange(user.BookingRequests);
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return true;
