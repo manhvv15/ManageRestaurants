@@ -15,42 +15,13 @@ namespace ManageRestaurantsClient.Pages.Admin
         private readonly HttpClient _httpClient = new HttpClient();
         public List<BookingRequestDTO.BookingList> BookingList { get; set; }
         public List<BookingRequestDTO.Booking> Bookings { get; set; } = new List<BookingRequestDTO.Booking>();
+        [BindProperty]
         public List<int> AvailableTableIds { get; set; } = new List<int>();
         public int CurrentPage { get; set; }
-        public int TotalPages { get; set; }
-        public class PagedResult<T>
-        {
-            public int PageNumber { get; set; }
-            public int PageSize { get; set; }
-            public int TotalBookings { get; set; }
-            public List<T> Bookings { get; set; }
-
-        }
-        //public async Task OnGetAsync(int? page)
-        //{
-        //    try
-        //    {
-        //        int pageNumber = page ?? 1;
-        //        int pageSize = 10;
-        //        var token = Request.Cookies["AuthToken"];
-        //        var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:5000/api/BookingRequest");
-        //        request.Headers.Add("Authorization", "Bearer " + token);
-        //        var response = await _httpClient.SendAsync(request);
-        //        response.EnsureSuccessStatusCode();
-        //        var responseData = await response.Content.ReadAsStringAsync();
-        //        if (responseData != null)
-        //        {
-        //            var result = JsonConvert.DeserializeObject<PagedResult<BookingRequestDTO>>(responseData);
-        //            Bookings = result.Bookings;
-        //            CurrentPage = result.PageNumber;
-        //            TotalPages = (int)System.Math.Ceiling(result.TotalBookings / (double)pageSize);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //    }
-        //}
+        [BindProperty]
+        public Booking Booking { get; set; }
+    
+      
         public async Task OnGetAsync()
         {
             try
@@ -65,6 +36,8 @@ namespace ManageRestaurantsClient.Pages.Admin
                 {
                     BookingRequestDTO.BookingList BookingList = JsonConvert.DeserializeObject<BookingRequestDTO.BookingList>(responseData);
                     Bookings = BookingList.Bookings.ToList();
+                    DateTime d = new DateTime(2024, 7, 21, 19, 0, 0);
+                  //  await GetAvailableTableId(d);
                 }
             }
             catch (Exception ex)
@@ -72,7 +45,7 @@ namespace ManageRestaurantsClient.Pages.Admin
                 Console.WriteLine(ex.Message);
             }
         }
-        public async Task<IActionResult> OnPostApproveAsync(int bookingId)
+        public async Task<IActionResult> OnPostApproveAsync()
         {
             DateTime d = new DateTime(2024, 7, 21, 19, 0, 0);
             return await GetAvailableTableId(d);

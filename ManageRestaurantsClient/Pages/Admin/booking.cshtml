@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Booking List";
     bool isAuthenticated = Request.Cookies.ContainsKey("AuthToken");
+    var tableIds = new List<int> { 1, 2, 3, 4, 5 };
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -116,7 +117,7 @@
                         <form method="post">
                                 <input type="hidden" name="bookingId" value="@booking.BookingId" />
 
-                                <button type="submit" class="btn btn-success" formaction="/Admin/Booking?handler=Approve">Approve</button>
+                                <button type="submit" class="btn btn-success" >Approve</button>
                                 <button type="submit" formaction="/Admin/Booking?handler=Cancel" class="btn btn-danger">Cancel</button>
                                 
                             </form>
@@ -135,28 +136,7 @@
         }
     </select>
 </div>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                @if (Model.CurrentPage > 1)
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="@Url.Page("/Admin/Booking", new { page = Model.CurrentPage - 1 })">Previous</a>
-                    </li>
-                }
-                @for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                        <a class="page-link" href="@Url.Page("/Admin/Booking", new { page = i })">@i</a>
-                    </li>
-                }
-                @if (Model.CurrentPage < Model.TotalPages)
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="@Url.Page("/Admin/Booking", new { page = Model.CurrentPage + 1 })">Next</a>
-                    </li>
-                }
-            </ul>
-        </nav>
+      
     }
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
