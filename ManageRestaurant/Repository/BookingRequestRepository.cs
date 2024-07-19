@@ -21,7 +21,7 @@ namespace ManageRestaurant.Repository
                 {
                     TableId = addBookingRequestDTO.TableId,
                     UserId = addBookingRequestDTO.UserId,
-                    Note = addBookingRequestDTO.Note,
+                    Note = addBookingRequestDTO.Note + ". Deposit: " + addBookingRequestDTO.IsDeposited + ". Amounut: " + addBookingRequestDTO.depositAmount,
                     NumberOfGuests = addBookingRequestDTO.NumberOfGuests,
                     ReservationDate = addBookingRequestDTO.ReservationDate,
                     Status = addBookingRequestDTO.Status,
