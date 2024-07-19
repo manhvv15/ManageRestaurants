@@ -41,6 +41,8 @@
             let userId = this.userInfo.userId;
             let tableSelect = document.getElementById('tableSelect');
             let tableId = parseInt(tableSelect.value);
+            let isDeposited = depositStatus.checked;
+            let depositAmount = document.getElementById('depositAmount').value;
             debugger
             let bookingRequest = {
                 reservationDate: reservationDate,
@@ -48,8 +50,11 @@
                 status: status,
                 note: note,
                 userId: userId,
-                tableId: tableId
+                tableId: tableId,
+                isDeposited: isDeposited,
+                depositAmount: depositAmount
             };
+            
 
             const response = await fetch('https://localhost:5000/api/BookingRequest/AddBookingRequestAsync', {
                 method: 'POST',
@@ -65,6 +70,12 @@
             }
 
             const result = await response.json();
+            if (result.url) {
+                window.location.href = result.url;
+            } else {
+                alert('URL không tồn tại');
+            }
+            
             let tableSelectContainer = document.getElementById('tableSelectContainer');
             alert('Booking successfully');
             document.getElementById('datetime').value = '';

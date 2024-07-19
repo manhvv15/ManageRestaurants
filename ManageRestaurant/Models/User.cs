@@ -27,5 +27,10 @@ namespace ManageRestaurant.Models
 
         public virtual ICollection<BookingRequest> BookingRequests { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
+
+        public static implicit operator User?(string? v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

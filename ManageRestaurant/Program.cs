@@ -1,3 +1,4 @@
+using CodeMegaVNPay.Services;
 using ManageRestaurant.Interface;
 using ManageRestaurant.Models;
 using ManageRestaurant.Repository;
@@ -56,6 +57,7 @@ namespace ManageRestaurant
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IJwtAuthManager, JwtAuthManager>();
             builder.Services.AddScoped<IMenuRepository, MenuRepository>();
+            builder.Services.AddScoped<IVnPayService, VnPayService>();
             builder.Services.AddScoped<IBookingRequestRepository, BookingRequestRepository>();
             builder.Services.AddCors();
             //builder.Services.AddAuthentication(options => {
@@ -102,17 +104,25 @@ namespace ManageRestaurant
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
             app.UseCors(builder =>
             {
                 builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
             });
+
             app.UseHttpsRedirection();
+
+            app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapControllers();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
             app.Run();
         }
