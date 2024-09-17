@@ -13,9 +13,9 @@ namespace ManageRestaurantsClient.Pages.Admin
 
         public List<TableStatus> Tables { get; set; }
         [BindProperty]
-        public DateTime ReservationDate { get; set; } = DateTime.Today;
+        public DateTime ReservationDate { get; set; } 
         [BindProperty]
-        public string ReservationTime { get; set; } = "18:00:00.000";
+        public string ReservationTime { get; set; } 
         public async Task OnGetAsync()
         {
             await FetchTableStatuses();
@@ -29,6 +29,7 @@ namespace ManageRestaurantsClient.Pages.Admin
         {
             try
             {
+
                 var token = Request.Cookies["AuthToken"];
                 var reservationDateTime = ReservationDate.ToString("yyyy-MM-dd") + " " + ReservationTime;
                 var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:5000/api/Table/CheckTableAvailability?reservationDate={reservationDateTime}");

@@ -1,7 +1,9 @@
 ﻿@page
-@model ManageRestaurantsClient.Pages.Users.BookingModel
+@model ManageRestaurantsClient.Pages.Users.VNPay_ResponseModel;
 @{
     ViewData["Title"] = "Menu Page";
+
+    string depositStatus = ViewData["depositStatus"].ToString();
     var isAuthenticated = Request.Cookies.ContainsKey("AuthToken");
     string authToken = string.Empty;
     string userId = string.Empty;
@@ -69,10 +71,10 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto py-0 pe-4" style="align-items:center">
-                        <a href="/Users/Home" class="nav-item nav-link active">Home</a>
+                        <a href="index.html" class="nav-item nav-link active">Home</a>
                         <a href="about.html" class="nav-item nav-link">About</a>
                         <a href="service.html" class="nav-item nav-link">Service</a>
-                        <a href="/Admin/menu" class="nav-item nav-link">Menu</a>
+                        <a href="/admin/menu" class="nav-item nav-link">Menu</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Booking</a>
                             <div class="dropdown-menu m-0">
@@ -99,6 +101,8 @@
         </div>
         <!-- Navbar & Hero End -->
         <!-- Reservation Start -->
+
+        <p style="color: red">@depositStatus</p>
         <div class="container-xxl py-5 px-0 wow fadeInUp" data-wow-delay="0.1s">
             <div class="row g-0">
                 <div class="col-md-6">

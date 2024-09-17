@@ -26,6 +26,8 @@ namespace ManageRestaurantsClient.Pages.Admin
             public List<T> Bookings { get; set; }
 
         }
+        [BindProperty]
+        public List<int> numberList { get; set; } = new List<int>();
         //public async Task OnGetAsync(int? page)
         //{
         //    try
@@ -63,8 +65,8 @@ namespace ManageRestaurantsClient.Pages.Admin
                 var responseData = await response.Content.ReadAsStringAsync();
                 if (responseData != null)
                 {
-                    BookingRequestDTO.BookingList BookingList = JsonConvert.DeserializeObject<BookingRequestDTO.BookingList>(responseData);
-                    Bookings = BookingList.Bookings.ToList();
+                    Bookings = JsonConvert.DeserializeObject<List<BookingRequestDTO.Booking>>(responseData);
+                    numberList = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
                 }
             }
             catch (Exception ex)
@@ -100,7 +102,26 @@ namespace ManageRestaurantsClient.Pages.Admin
 
             return RedirectToPage("/Admin/Booking");
         }
-
+        public async Task<IActionResult> OnPostApprovedAsync(int tableId, DateTime reservationDate)
+        {
+            try
+            {
+                var token = Request.Cookies["AuthToken"];
+                var request = new HttpRequestMessage(HttpMethod.Put, $"https://localhost:5000/api/Table/updateApproveTable?tableId={tableId}&reservationDate={reservationDate}");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                if (response != null)
+                {
+                    //send mail sucess
+                }
+                return RedirectToPage("/Admin/Table");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
         public async Task<IActionResult> OnPostCancelAsync(int bookingId)
         {
             return await ChangeBookingStatusAsync(bookingId, false);

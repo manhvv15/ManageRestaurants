@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Booking List";
     bool isAuthenticated = Request.Cookies.ContainsKey("AuthToken");
+    var  numbers = new List<int>{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -113,12 +114,23 @@
                         <td>
                           @if (booking.Status == "pending")
                                {
-                        <form method="post">
+                         <form method="post" id="form-@booking.BookingId">
                                 <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                <input type="hidden" name="reservationDate" value="@booking.ReservationDate" />
 
-                                <button type="submit" class="btn btn-success" formaction="/Admin/Booking?handler=Approve">Approve</button>
+                                <button type="button" class="btn btn-success" onclick="showDropdown('@booking.BookingId')">Approve</button>
                                 <button type="submit" formaction="/Admin/Booking?handler=Cancel" class="btn btn-danger">Cancel</button>
-                                
+
+                                <div class="table-id-dropdown" id="tableIdDropdown-@booking.BookingId" style="display: none;">
+                                    <label for="tableId-@booking.BookingId">Select Table ID:</label>
+                                    <select name="tableId" id="tableId-@booking.BookingId" class="form-control">
+                                        @foreach (var tableId in @Model.numberList)
+                                        {
+                                            <option value="@tableId">@tableId</option>
+                                        }
+                                    </select>
+                                    <button type="submit" formaction="/Admin/Booking?handler=Approved" class="btn btn-primary mt-2">Submit Approval</button>
+                                </div>
                             </form>
                             }        
                         </td>
@@ -192,5 +204,12 @@
         }
                 });
     </script>
+    <script>
+    function showDropdown(bookingId) {
+        document.getElementById('tableIdDropdown-' + bookingId).style.display = 'block';
+        var form = document.getElementById('form-' + bookingId);
+        form.querySelector('button[type="button"]').style.display = 'none';
+    }
+</script>
 </body>
 </html>

@@ -120,7 +120,54 @@ namespace ManageRestaurant.Controllers.Admin
             return Ok(new { message = "Booking status updated successfully" });
         }
         // table : get List , nhap gio 
+        [HttpGet("statistics")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> GetBookingStatistics()
+        {
+            var now = DateTime.Now;
+            var startOfToday = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
+            var startOfWeek = now.AddDays(-(int)now.DayOfWeek).Date;
+            var startOfMonth = new DateTime(now.Year, now.Month, 1);
 
+            var todayBookings = await context.BookingRequests
+                                             .Where(b => b.ReservationDate >= startOfToday)
+                                             .ToListAsync();
+
+            var lastWeekBookings = await context.BookingRequests
+                                                .Where(b => b.ReservationDate >= startOfWeek && b.ReservationDate < startOfToday)
+                                                .ToListAsync();
+
+            var lastMonthBookings = await context.BookingRequests
+                                                 .Where(b => b.ReservationDate >= startOfMonth && b.ReservationDate < startOfToday)
+                                                 .ToListAsync();
+
+            var statistics = new
+            {
+                Today = new
+                {
+                    New = todayBookings.Count(b => b.Status == "new"),
+                    Pending = todayBookings.Count(b => b.Status == "pending"),
+                    Cancelled = todayBookings.Count(b => b.Status == "cancelled"),
+                    Completed = todayBookings.Count(b => b.Status == "completed")
+                },
+                LastWeek = new
+                {
+                    New = lastWeekBookings.Count(b => b.Status == "new"),
+                    Pending = lastWeekBookings.Count(b => b.Status == "pending"),
+                    Cancelled = lastWeekBookings.Count(b => b.Status == "cancelled"),
+                    Completed = lastWeekBookings.Count(b => b.Status == "completed")
+                },
+                LastMonth = new
+                {
+                    New = lastMonthBookings.Count(b => b.Status == "new"),
+                    Pending = lastMonthBookings.Count(b => b.Status == "pending"),
+                    Cancelled = lastMonthBookings.Count(b => b.Status == "cancelled"),
+                    Completed = lastMonthBookings.Count(b => b.Status == "completed")
+                }
+            };
+
+            return Ok(statistics);
+        }
         [HttpPost("AddBookingRequestAsync")]
         [Authorize]
         public async Task<ActionResult> AddBookingRequestAsync([FromBody] AddBookingRequestDTO addBookingRequestDTO)
